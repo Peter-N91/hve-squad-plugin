@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/github/open-plugin-spec/main/schemas/plugin.schema.json",
+  "name": "hve-squad",
+  "version": "0.16.0-pre",
+  "description": "Plugin distribution tree for hve-squad: Squad Copilot agents and the squad skill, generated and release-gated from Peter-N91/hve-squad.",
+  "agents": ["agents/squad/"],
+  "skills": ["skills/squad/"]
+}
