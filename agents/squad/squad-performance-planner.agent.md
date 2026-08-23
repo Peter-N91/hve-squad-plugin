@@ -2,7 +2,9 @@
 name: Squad Performance Planner
 description: "Non-user-invocable squad performance and reliability planner that runs the performance-slo-planner skill to produce SLIs, SLOs, error budgets, a load model, a test matrix, and a reliability backlog"
 user-invocable: false
-model: Claude Sonnet 5 (copilot)
+model:
+  - Claude Sonnet 5 (copilot)
+  - GPT-5.6 Terra (copilot)
 ---
 
 # Squad Performance Planner
@@ -77,10 +79,10 @@ Sort the backlog into what this role produced and what another role must act on:
 
 Return to the coordinator:
 
-* **Plan Path** ÔÇö the file the plan was written to.
-* **SLO Summary** ÔÇö one line per SLI: the target, the window, and whether it is anchored to a requirement id or marked as an assumption.
-* **Load Model** ÔÇö the profiles characterized, or the reason a profile could not be.
-* **Observability Gaps** ÔÇö SLIs that cannot currently be measured in production.
-* **Handoffs** ÔÇö the named recommendations for `observability`, `cost-manager`, and the load-testing tooling.
-* **Assumptions** ÔÇö every number this role proposed rather than read.
-* **Clarifying Questions** ÔÇö what the coordinator must resolve with the user, or `none`.
+* **Plan Path** — the file the plan was written to.
+* **SLO Summary** — one line per SLI: the target, the window, and whether it is anchored to a requirement id or marked as an assumption.
+* **Load Model** — the profiles characterized, or the reason a profile could not be.
+* **Observability Gaps** — SLIs that cannot currently be measured in production.
+* **Handoffs** — the named recommendations for `observability`, `cost-manager`, and the load-testing tooling.
+* **Assumptions** — every number this role proposed rather than read.
+* **Clarifying Questions** — what the coordinator must resolve with the user, or `none`.

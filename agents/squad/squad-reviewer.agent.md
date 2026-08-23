@@ -2,7 +2,9 @@
 name: Squad Reviewer
 description: "Non-user-invocable squad reviewer that validates implemented changes against the plan through the rpi-review and code-review skills and returns severity-graded findings"
 user-invocable: false
-model: Claude Haiku 4.5 (copilot)
+model:
+  - Claude Haiku 4.5 (copilot)
+  - GPT-5.4 mini (copilot)
 ---
 
 # Squad Reviewer
@@ -56,9 +58,9 @@ Assign each finding a severity. Write the review record per the skill's conventi
 
 Return to the coordinator:
 
-* **Verdict** ÔÇö one of `Pass`, `Pass-With-Findings`, or `Fail`.
-* **Scope Reviewed** ÔÇö the files and the plan phase covered.
-* **Findings** ÔÇö a table of severity, file and line, and the issue, ordered by severity.
-* **Plan Deviations** ÔÇö planned-not-done, done-not-planned, and done-differently items, or `none`.
-* **Conditions Honored** ÔÇö each council condition and the evidence it was met, or `not applicable`.
-* **Review Record** ÔÇö the path of the artifact written.
+* **Verdict** — one of `Pass`, `Pass-With-Findings`, or `Fail`.
+* **Scope Reviewed** — the files and the plan phase covered.
+* **Findings** — a table of severity, file and line, and the issue, ordered by severity.
+* **Plan Deviations** — planned-not-done, done-not-planned, and done-differently items, or `none`.
+* **Conditions Honored** — each council condition and the evidence it was met, or `not applicable`.
+* **Review Record** — the path of the artifact written.

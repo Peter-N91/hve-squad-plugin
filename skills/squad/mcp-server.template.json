@@ -27,7 +27,7 @@
 //   4. Pick the command form that matches your install (see the two options
 //      in the entry) and delete the other.
 //   5. Reload VS Code so Copilot picks up the new server, then ask Copilot to
-//      "research X with the squad" ÔÇö the squad_* tools become model-invocable.
+//      "research X with the squad" — the squad_* tools become model-invocable.
 //
 // Execution model (Phase 0)
 //   DELEGATED. Each tool returns the Squad Coordinator persona, the matched

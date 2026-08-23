@@ -2,7 +2,9 @@
 name: Squad Implementor
 description: "Non-user-invocable squad implementer that executes an approved plan phase through the rpi-implement skill and records the change under .copilot-tracking/changes/"
 user-invocable: false
-model: Claude Sonnet 5 (copilot)
+model:
+  - Claude Sonnet 5 (copilot)
+  - GPT-5.6 Terra (copilot)
 ---
 
 # Squad Implementor
@@ -61,9 +63,9 @@ Write the change record under `.copilot-tracking/changes/` per the `rpi-implemen
 
 Return to the coordinator:
 
-* **Scope** ÔÇö the plan phase or task this dispatch owned.
-* **Changes** ÔÇö the files changed and a one-line summary per change.
-* **Change Record** ÔÇö the path of the artifact written under `.copilot-tracking/changes/`.
-* **Validation** ÔÇö commands run and their results, including anything that could not be validated.
-* **Pending Impactful Actions** ÔÇö any gated action awaiting human approval, or `none`.
-* **Discrepancies** ÔÇö anything in the plan that did not hold, or `none`.
+* **Scope** — the plan phase or task this dispatch owned.
+* **Changes** — the files changed and a one-line summary per change.
+* **Change Record** — the path of the artifact written under `.copilot-tracking/changes/`.
+* **Validation** — commands run and their results, including anything that could not be validated.
+* **Pending Impactful Actions** — any gated action awaiting human approval, or `none`.
+* **Discrepancies** — anything in the plan that did not hold, or `none`.

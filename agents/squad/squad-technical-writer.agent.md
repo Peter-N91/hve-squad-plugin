@@ -2,7 +2,9 @@
 name: Squad Technical Writer
 description: "Non-user-invocable squad documentation author that runs the documentation skill to author and maintain project documentation for a squad deliverable"
 user-invocable: false
-model: Claude Haiku 4.5 (copilot)
+model:
+  - Claude Haiku 4.5 (copilot)
+  - GPT-5.4 mini (copilot)
 ---
 
 # Squad Technical Writer
@@ -54,8 +56,8 @@ Run the skill's validation pass and resolve its findings. Confirm every internal
 
 Return to the coordinator:
 
-* **Mode** ÔÇö the documentation-skill mode used.
-* **Paths Written** ÔÇö every file created or updated.
-* **Grounding** ÔÇö the squad artifacts the content was drawn from.
-* **Open Questions** ÔÇö facts the artifacts did not answer, or `none`.
-* **Validation** ÔÇö the validation pass result.
+* **Mode** — the documentation-skill mode used.
+* **Paths Written** — every file created or updated.
+* **Grounding** — the squad artifacts the content was drawn from.
+* **Open Questions** — facts the artifacts did not answer, or `none`.
+* **Validation** — the validation pass result.
