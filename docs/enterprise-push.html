@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Push — hve-squad-plugin</title>
+  <meta name="description" content="Force-installing hve-squad-plugin org-wide via GitHub Copilot enterprise-managed settings." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="install-cli.html">Install: CLI</a>
+        <a href="install-desktop.html">Install: Desktop</a>
+        <a href="install-vscode.html">Install: VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html" class="active">Enterprise Push</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Admin Guide</div>
+      <h1>Enterprise push runbook: force-installing <code>hve-squad</code> org-wide</h1>
+      <p class="lead">
+        For GitHub Copilot enterprise admins who want every developer in their enterprise to
+        receive the <code>hve-squad</code> plugin automatically, without each person running
+        <code>copilot plugin install</code> themselves.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <div class="callout">
+        <p>
+          This page is a lightly reformatted copy of the runbook for reading on the Pages site.
+          <strong>The Markdown source is the source of truth</strong> for anyone reading it
+          directly on GitHub:
+          <a href="https://github.com/Peter-N91/hve-squad-plugin/blob/main/docs/enterprise-push-runbook.md"><code>docs/enterprise-push-runbook.md</code></a>.
+        </p>
+      </div>
+
+      <h2>How it works</h2>
+      <p>
+        An enterprise admin adds an entry under <code>enabledPlugins</code> in the enterprise's
+        <code>copilot/managed-settings.json</code> (server-managed, in a
+        <code>.github-private</code> repository — the default and recommended deployment method)
+        or in an MDM-/file-based <code>managed-settings.json</code> for local-client-only
+        enforcement. <code>enabledPlugins</code> and <code>extraKnownMarketplaces</code> work
+        additively: this plugin's repo is not one of Copilot's built-in default marketplaces, so
+        the enterprise settings must also register it via <code>extraKnownMarketplaces</code>
+        before referencing it in <code>enabledPlugins</code>. Once committed and pushed to the
+        governance repo's default branch, every supported client (Copilot CLI, VS Code,
+        JetBrains, the GitHub Copilot app, Copilot cloud agent) picks up the policy on next
+        sign-in or within about an hour, and installs the plugin for each user automatically —
+        the user only needs read access to
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a>
+        (public, MIT), so no extra licensing or access grant is required.
+      </p>
+
+      <h2>Example <code>managed-settings.json</code> entry</h2>
+      <pre><code>{
+  "extraKnownMarketplaces": {
+    "hve-squad-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "Peter-N91/hve-squad-plugin",
+        "ref": "main"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "hve-squad@hve-squad-plugin": true
+  }
+}</code></pre>
+      <p>
+        The <code>enabledPlugins</code> key is <code>PLUGIN-NAME@MARKETPLACE-NAME</code> —
+        <code>hve-squad</code> is the plugin name from this repo's
+        <code>.github/plugin/plugin.json</code>, and <code>hve-squad-plugin</code> is the
+        marketplace name from <code>.github/plugin/marketplace.json</code>'s top-level
+        <code>name</code> field. Both must match exactly, or the reference resolves to nothing.
+      </p>
+
+      <h2>Notes for admins</h2>
+      <ul>
+        <li>
+          Setting <code>{ "overridable": true }</code> on either key in the enterprise default
+          lets individual enterprise teams add further marketplaces/plugins on top of this
+          baseline via <code>copilot/team-mappings.json</code> and per-team files under
+          <code>copilot/teams/</code> — see GitHub's
+          <a href="https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-agents/configure-enterprise-managed-settings">Configuring enterprise-managed settings</a>
+          guide for the override syntax.
+        </li>
+        <li>
+          A plugin or marketplace pinned this way cannot be disabled or repointed by an
+          individual user locally — the managed value always wins for that entry, and the CLI's
+          <code>/plugins</code> dashboard marks it <code>Managed</code>.
+        </li>
+        <li>
+          This runbook only documents the mechanism. Pushing this entry into any specific
+          organization's <code>managed-settings.json</code> is that organization's own action, not
+          something this repository or its maintainers perform on an adopter's behalf.
+        </li>
+      </ul>
+
+      <div class="pager">
+        <a class="prev" href="architecture.html">
+          <div class="dir">← Back</div>
+          <div class="ttl">Architecture</div>
+        </a>
+        <a class="next" href="index.html">
+          <div class="dir">Next →</div>
+          <div class="ttl">Home</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · generated from <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

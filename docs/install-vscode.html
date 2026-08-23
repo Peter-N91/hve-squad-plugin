@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Install: VS Code notes — hve-squad-plugin</title>
+  <meta name="description" content="VS Code-specific notes beyond the desktop-app plugin path, including the non-plugin MCP-only setup alternative." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="install-cli.html">Install: CLI</a>
+        <a href="install-desktop.html">Install: Desktop</a>
+        <a href="install-vscode.html" class="active">Install: VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html">Enterprise Push</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Install Guide</div>
+      <h1>VS Code notes</h1>
+      <p class="lead">
+        There is nothing meaningfully different for VS Code beyond the
+        <a href="install-desktop.html">desktop-app Plugins path</a> — this page is short on
+        purpose. The one thing worth knowing is the non-plugin, MCP-only alternative below.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>The plugin path is the same as the desktop app</h2>
+      <p>
+        VS Code's <strong>Settings → Extensions → Copilot → Plugins</strong> panel installs this
+        plugin the same way the standalone Copilot desktop app does, resolving the same
+        <code>.github/plugin/plugin.json</code> manifest. See
+        <a href="install-desktop.html">Install: Desktop app</a> for the walkthrough — it applies
+        to VS Code without modification.
+      </p>
+
+      <h2>Alternative: MCP-only, no plugin install</h2>
+      <p>
+        If you don't want to install the plugin at all — for example, you only want tool-call
+        access to the squad rather than direct agent dispatch — you can register the companion
+        <code>@hve-squad/mcp</code> server directly in a workspace's <code>.vscode/mcp.json</code>
+        instead. This is the pattern documented in this plugin's own
+        <a href="https://github.com/Peter-N91/hve-squad-plugin/blob/main/skills/squad/mcp-server.template.json"><code>skills/squad/mcp-server.template.json</code></a>:
+      </p>
+      <pre><code>{
+  "servers": {
+    "hve-squad": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@hve-squad/mcp"]
+    }
+  }
+}</code></pre>
+      <p>
+        Merge that entry into <code>.vscode/mcp.json</code> (do not replace servers you already
+        depend on), reload VS Code, and the squad's tools
+        (<code>squad_research</code>, <code>squad_plan</code>, <code>squad_review</code>,
+        <code>squad_architect</code>, <code>squad_run</code>) become model-invocable — without
+        installing the plugin's agents or skills at all. See
+        <a href="architecture.html">Architecture</a> for how this tool-call surface relates to
+        the plugin's direct agent-dispatch surface.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Why this exists as a separate path.</strong> The MCP-only route is for hosts or
+          workflows that consume tools but don't have a plugin installation surface at all (or a
+          user who wants tool-call invocation without adopting the plugin's namespace). Most VS
+          Code users installing interactively should just use the
+          <a href="install-desktop.html">Plugins settings panel</a>.
+        </p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="install-desktop.html">
+          <div class="dir">← Back</div>
+          <div class="ttl">Install: Desktop app</div>
+        </a>
+        <a class="next" href="architecture.html">
+          <div class="dir">Next →</div>
+          <div class="ttl">Architecture</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · generated from <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

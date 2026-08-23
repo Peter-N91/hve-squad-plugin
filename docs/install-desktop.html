@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Install: Desktop app — hve-squad-plugin</title>
+  <meta name="description" content="Step-by-step install instructions for the GitHub Copilot desktop app and VS Code's Settings > Extensions > Copilot > Plugins path." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="install-cli.html">Install: CLI</a>
+        <a href="install-desktop.html" class="active">Install: Desktop</a>
+        <a href="install-vscode.html">Install: VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html">Enterprise Push</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Install Guide</div>
+      <h1>Install via the desktop app / VS Code Plugins settings</h1>
+      <p class="lead">
+        The GitHub Copilot desktop app and VS Code's own Copilot plugin settings both install
+        from the same marketplace entry — no terminal required.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>Prerequisites</h2>
+      <ul>
+        <li>The GitHub Copilot desktop app, <strong>or</strong> VS Code with the GitHub Copilot extension, signed in</li>
+        <li>Read access to <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a> (public — no extra access grant needed)</li>
+      </ul>
+
+      <h2>1. Open the Plugins settings panel</h2>
+      <p>
+        In VS Code: open <strong>Settings → Extensions → Copilot → Plugins</strong> (or the
+        equivalent Plugins panel in the standalone desktop app). This panel lists installed
+        plugins and offers a search/install action for new ones.
+      </p>
+
+      <h2>2. Search for and install the plugin</h2>
+      <p>
+        Search for <code>Peter-N91/hve-squad-plugin</code> (or paste the repository URL if the
+        panel accepts one) and choose <strong>Install</strong>. The client fetches
+        <code>.github/plugin/plugin.json</code> from this repository the same way the CLI does,
+        and registers the same agents, skills, hooks, and MCP server entry.
+      </p>
+
+      <div class="screenshot-placeholder">
+        <!-- SCREENSHOT PLACEHOLDER: the Copilot Plugins settings panel with hve-squad-plugin found/installed -->
+        <div class="ph-icon">🖼️</div>
+        <div class="ph-label">Screenshot placeholder</div>
+        <div class="ph-desc">The Copilot Plugins settings panel with hve-squad-plugin found/installed</div>
+      </div>
+
+      <h2>3. Confirm it works in chat</h2>
+      <p>
+        Open Copilot Chat and ask it to use the squad — for example,
+        <code>"use the squad to research this codebase"</code> — or address an agent directly by
+        its namespaced name, <code>hve-squad:squad-coordinator</code>. A successful dispatch shows
+        the Squad Coordinator's response in the chat view.
+      </p>
+
+      <div class="screenshot-placeholder">
+        <!-- SCREENSHOT PLACEHOLDER: a successful hve-squad agent invocation shown in the Copilot chat view -->
+        <div class="ph-icon">🖼️</div>
+        <div class="ph-label">Screenshot placeholder</div>
+        <div class="ph-desc">A successful hve-squad agent invocation shown in the Copilot chat view</div>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Same manifest, same result.</strong> The desktop/VS Code Plugins path and the
+          <code>copilot plugin install</code> CLI command both resolve the same
+          <code>.github/plugin/plugin.json</code> manifest in this repository — there is no
+          separate desktop-only distribution to keep in sync. See
+          <a href="install-cli.html">Install: Copilot CLI</a> for the equivalent command-line
+          steps and the install-flow diagram.
+        </p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="install-cli.html">
+          <div class="dir">← Back</div>
+          <div class="ttl">Install: Copilot CLI</div>
+        </a>
+        <a class="next" href="install-vscode.html">
+          <div class="dir">Next →</div>
+          <div class="ttl">Install: VS Code notes</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · generated from <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

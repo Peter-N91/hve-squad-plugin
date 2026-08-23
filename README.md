@@ -4,6 +4,24 @@ This repository is a **generated, release-gated mirror** of
 [`Peter-N91/hve-squad`](https://github.com/Peter-N91/hve-squad)'s `squad-src/`
 GitHub Copilot CLI plugin distribution tree.
 
+## Documentation
+
+Full documentation lives on the project site:
+
+**[peter-n91.github.io/hve-squad-plugin](https://peter-n91.github.io/hve-squad-plugin/)**
+
+| Page                                                                                    | What it covers                                                    |
+|------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| [Install: Copilot CLI](https://peter-n91.github.io/hve-squad-plugin/install-cli.html)     | `copilot plugin install`, verification, namespace resolution        |
+| [Install: Desktop app](https://peter-n91.github.io/hve-squad-plugin/install-desktop.html) | The GitHub Copilot desktop app / VS Code Plugins settings path       |
+| [Install: VS Code notes](https://peter-n91.github.io/hve-squad-plugin/install-vscode.html) | VS Code specifics and the non-plugin, MCP-only alternative           |
+| [Architecture](https://peter-n91.github.io/hve-squad-plugin/architecture.html)            | Plugin vs. MCP server invocation surfaces, and the version-pinning gap |
+| [Enterprise Push](https://peter-n91.github.io/hve-squad-plugin/enterprise-push.html)      | Force-installing this plugin org-wide via Copilot enterprise settings |
+
+The site source is in [docs/](docs/) and is published to GitHub Pages by
+[.github/workflows/docs.yml](.github/workflows/docs.yml) on every push to `main` that touches
+`docs/`.
+
 It is **never hand-edited**. Its content (`agents/`, `skills/`, and
 `.github/plugin/plugin.json`) is regenerated only when `hve-squad` cuts a
 release, extracted from that release's immutable git tag — never from a live

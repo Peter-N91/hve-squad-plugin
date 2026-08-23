@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture — hve-squad-plugin</title>
+  <meta name="description" content="The plugin-vs-MCP-server relationship: two invocation surfaces for the squad, and the known version-pinning gap between them." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="install-cli.html">Install: CLI</a>
+        <a href="install-desktop.html">Install: Desktop</a>
+        <a href="install-vscode.html">Install: VS Code</a>
+        <a href="architecture.html" class="active">Architecture</a>
+        <a href="enterprise-push.html">Enterprise Push</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Reference</div>
+      <h1>Two invocation surfaces, one squad</h1>
+      <p class="lead">
+        This plugin and its companion MCP server give you two different ways to reach the same
+        squad — pick based on whether your host dispatches agents directly or only calls tools.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>Surface 1 — direct agent dispatch (this plugin)</h2>
+      <p>
+        Installing <code>hve-squad-plugin</code> registers <code>agents/squad/</code> and
+        <code>skills/squad/</code> directly with the host (Copilot CLI, VS Code, or the desktop
+        app). The host's own <code>runSubagent</code>/<code>task</code> mechanism dispatches the
+        Squad Coordinator and its cast in-process, under the <code>hve-squad:squad-*</code>
+        namespace. No server process, no network call — everything runs as agents and skills the
+        host already knows how to load.
+      </p>
+
+      <h2>Surface 2 — tool-call invocation via <code>@hve-squad/mcp</code></h2>
+      <p>
+        This plugin's <code>.mcp.json</code> also registers the companion
+        <a href="https://github.com/Peter-N91/hve-squad-mcp">Peter-N91/hve-squad-mcp</a> server
+        over stdio. A host that talks MCP but has no plugin/agent-dispatch surface of its own
+        (or a delegated-mode workflow that prefers tool calls) can call the squad through five
+        coarse intent tools — <code>squad_research</code>, <code>squad_plan</code>,
+        <code>squad_review</code>, <code>squad_architect</code>, and <code>squad_run</code> —
+        instead of addressing an agent by name.
+      </p>
+      <p>
+        In <strong>delegated mode</strong> (the current, Phase 0 execution model), each tool call
+        returns the Squad Coordinator persona, the matched routing row, and a framed dispatch
+        request; the calling host's own agent loop is what actually runs
+        <code>runSubagent</code>/<code>task</code> against it. The MCP server itself calls no
+        model and holds no credentials — it is a router, not a runtime.
+      </p>
+
+      <div class="mermaid">
+flowchart TD
+    subgraph Plugin["hve-squad-plugin (this repo)"]
+        A["agents/squad/*.agent.md<br/>(27 agents)"]
+        S["skills/squad/ + invocations/<br/>(squad skill, 7 invocation skills)"]
+        H["hooks.json<br/>(enforcement backstop)"]
+        M[".mcp.json<br/>registers @hve-squad/mcp"]
+    end
+
+    subgraph HostDirect["Host with agent-dispatch surface"]
+        HD["Copilot CLI / VS Code / desktop app"]
+    end
+
+    subgraph HostMCP["Host with MCP-only surface"]
+        HM["Any MCP-aware client"]
+    end
+
+    subgraph MCPServer["Peter-N91/hve-squad-mcp"]
+        T["5 coarse tools:<br/>squad_research, squad_plan,<br/>squad_review, squad_architect, squad_run"]
+    end
+
+    HD -- "direct dispatch<br/>hve-squad:squad-*" --> A
+    A --> S
+    S --> H
+
+    HM -- "tool call" --> T
+    T -- "returns persona + routing row<br/>+ framed dispatch request" --> HM
+    HM -- "host's own runSubagent/task<br/>runs the actual dispatch" --> A
+
+    M -.->|"registers"| T
+      </div>
+
+      <h2>Known open item: version-pinning gap</h2>
+      <div class="callout warn">
+        <p>
+          <strong>This is an open item, not a solved one.</strong> This plugin's content
+          (<code>agents/</code>, <code>skills/</code>, <code>.github/plugin/plugin.json</code>) is
+          rebuilt and release-gated from an immutable <code>hve-squad</code> git tag — its own
+          <code>README.md</code> records exactly which tag it was built from
+          (<code>Peter-N91/hve-squad</code> <code>v0.16.0</code> at time of writing). The
+          <code>@hve-squad/mcp</code> server it wires up via <code>.mcp.json</code> is a
+          <strong>separate repository with its own bundled cast and its own release cadence</strong>.
+          There is currently no mechanism that guarantees the plugin's tag-built agent roster and
+          the MCP server's bundled cast are pinned to the same underlying <code>hve-squad</code>
+          revision at any given moment — a consumer installing both today could, in principle, get
+          a plugin agent set and an MCP-routed cast that drifted apart between releases. Closing
+          this gap (a shared version-pin contract between the two repos) is tracked as future work
+          upstream in <code>hve-squad</code>, not resolved by this plugin.
+        </p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="install-vscode.html">
+          <div class="dir">← Back</div>
+          <div class="ttl">Install: VS Code notes</div>
+        </a>
+        <a class="next" href="enterprise-push.html">
+          <div class="dir">Next →</div>
+          <div class="ttl">Enterprise Push</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · generated from <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · companion MCP server: <a href="https://github.com/Peter-N91/hve-squad-mcp">Peter-N91/hve-squad-mcp</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'strict' });
+  </script>
+</body>
+</html>

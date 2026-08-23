@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Install: Copilot CLI — hve-squad-plugin</title>
+  <meta name="description" content="Step-by-step GitHub Copilot CLI install instructions for the hve-squad-plugin, verification, and namespace resolution." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="install-cli.html" class="active">Install: CLI</a>
+        <a href="install-desktop.html">Install: Desktop</a>
+        <a href="install-vscode.html">Install: VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html">Enterprise Push</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Install Guide</div>
+      <h1>Install via Copilot CLI</h1>
+      <p class="lead">
+        Register the plugin's marketplace, install it, and confirm the <code>hve-squad</code>
+        namespace resolves before dispatching an agent.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>Prerequisites</h2>
+      <ul>
+        <li>GitHub Copilot CLI installed and signed in</li>
+        <li>Read access to <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a> (public repository — no extra access grant needed)</li>
+      </ul>
+
+      <h2>1. Install the plugin</h2>
+      <p>From any directory, run:</p>
+      <pre><code>copilot plugin install Peter-N91/hve-squad-plugin</code></pre>
+      <p>
+        The CLI reads this repository's <code>.github/plugin/plugin.json</code> manifest and
+        registers everything it points at: the 27 agents under <code>agents/squad/</code>, the
+        squad skill and its invocation skills under <code>skills/squad/</code>, the
+        <code>hooks.json</code> enforcement scripts, and the <code>.mcp.json</code> server
+        registration for <code>@hve-squad/mcp</code>.
+      </p>
+
+      <h2>2. Verify the install</h2>
+      <pre><code>copilot plugin list</code></pre>
+      <p>
+        Confirm <code>hve-squad</code> appears in the output with a status indicating it is
+        active. If it does not appear, re-run step 1 and check the CLI's own error output — a
+        failed manifest fetch is the most common cause and usually resolves on retry.
+      </p>
+
+      <div class="screenshot-placeholder">
+        <!-- SCREENSHOT PLACEHOLDER: copilot plugin list output showing hve-squad registered -->
+        <div class="ph-icon">🖼️</div>
+        <div class="ph-label">Screenshot placeholder</div>
+        <div class="ph-desc">copilot plugin list output showing hve-squad registered</div>
+      </div>
+
+      <h2>3. Namespace resolution</h2>
+      <p>
+        Once installed, every agent this plugin ships is addressable under the
+        <code>hve-squad:squad-*</code> namespace — the plugin name (<code>hve-squad</code>, from
+        <code>plugin.json</code>) prefixed to each agent's own name. For example:
+      </p>
+      <pre><code># Ask Copilot CLI to dispatch the coordinator directly
+hve-squad:squad-coordinator
+
+# Or let natural language resolve to it
+"use the squad to research this codebase"</code></pre>
+      <p>
+        If two installed plugins ship an agent with the same short name, the namespace prefix is
+        what disambiguates them — always safe to use explicitly.
+      </p>
+
+      <h2>Install flow</h2>
+      <div class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant CLI as Copilot CLI
+    participant Repo as hve-squad-plugin (this repo)
+    participant Reg as Local plugin registry
+
+    U->>CLI: copilot plugin install Peter-N91/hve-squad-plugin
+    CLI->>Repo: fetch .github/plugin/plugin.json
+    Repo-->>CLI: manifest (agents, skills, hooks, mcpServers paths)
+    CLI->>Repo: fetch agents/squad/*, skills/squad/*, hooks.json, .mcp.json
+    CLI->>Reg: register 27 agents + squad skill (7 invocations) + hooks + MCP server
+    Reg-->>CLI: namespace "hve-squad" active
+    U->>CLI: copilot plugin list
+    CLI-->>U: hve-squad — active
+    U->>CLI: hve-squad:squad-coordinator ...
+    CLI-->>U: dispatches Squad Coordinator agent
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="index.html">
+          <div class="dir">← Back</div>
+          <div class="ttl">Home</div>
+        </a>
+        <a class="next" href="install-desktop.html">
+          <div class="dir">Next →</div>
+          <div class="ttl">Install: Desktop app</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · generated from <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'strict' });
+  </script>
+</body>
+</html>
