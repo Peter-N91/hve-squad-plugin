@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/github/open-plugin-spec/main/schemas/plugin.schema.json",
   "name": "hve-squad",
-  "version": "0.16.1-pre+local",
-  "description": "Plugin distribution tree for hve-squad: 27 Squad Copilot agents and the squad skill (including 7 skills under skills/squad/invocations/: 5 prompt-derived invocations plus squad-doctor and squad-init-hooks), generated and release-gated from Peter-N91/hve-squad.",
+  "version": "0.16.0",
+  "description": "Plugin distribution tree for hve-squad: 27 Squad Copilot agents and the squad skill (including 5 invocation skills under skills/squad/invocations/), generated and release-gated from Peter-N91/hve-squad.",
   "agents": [
     "agents/squad/"
   ],

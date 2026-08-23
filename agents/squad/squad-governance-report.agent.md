@@ -8,7 +8,7 @@ argument-hint: "[outputPath=<path>] [squad=<name>] [period={all|30d|7d}]"
 
 # Squad Governance Report
 
-Parse squad state — decisions, history, consumption, and notifications — to produce a self-contained HTML governance dashboard. The dashboard visualizes coordination activity, governance gates, cost distribution, role dispatch patterns, compliance indicators, and key outcomes so a developer or stakeholder can assess squad health at a glance.
+Parse squad state ÔÇö decisions, history, consumption, and notifications ÔÇö to produce a self-contained HTML governance dashboard. The dashboard visualizes coordination activity, governance gates, cost distribution, role dispatch patterns, compliance indicators, and key outcomes so a developer or stakeholder can assess squad health at a glance.
 
 Squad state is **read-only** input here. This agent renders a report and nothing else: it never persists squad state, dispatch history, or consumption tracking.
 
@@ -24,9 +24,9 @@ Squad state is **read-only** input here. This agent renders a report and nothing
 
 Check `.copilot-tracking/squad/` for state files:
 
-1. **`federation.md` present** — federation mode. When `squad` is provided, scope reads to `.copilot-tracking/squad/members/<squad>/`. When omitted, read all sub-squads and attribute metrics per sub-squad.
-2. **No `federation.md`, but `team.md` present** — single-squad mode. Scope reads to `.copilot-tracking/squad/`.
-3. **Neither present** — stop and report: "No squad state found. Run `/squad` to initialize a squad first."
+1. **`federation.md` present** ÔÇö federation mode. When `squad` is provided, scope reads to `.copilot-tracking/squad/members/<squad>/`. When omitted, read all sub-squads and attribute metrics per sub-squad.
+2. **No `federation.md`, but `team.md` present** ÔÇö single-squad mode. Scope reads to `.copilot-tracking/squad/`.
+3. **Neither present** ÔÇö stop and report: "No squad state found. Run `/squad` to initialize a squad first."
 
 ### Step 2: Extract governance data
 
@@ -46,7 +46,7 @@ Parse `## Intake Readiness Verdict` entries. For each: `timestamp`, `topic-id`, 
 
 #### From `history/<agent>.md` files
 
-For each dispatch entry: role, agent name, model, `internal_turns`, token counts, short summary of key activities performed, outcome (success / failure / escalation). History blocks carry no cost — read every money figure from `consumption.md` instead, and attribute it by role rather than per dispatch.
+For each dispatch entry: role, agent name, model, `internal_turns`, token counts, short summary of key activities performed, outcome (success / failure / escalation). History blocks carry no cost ÔÇö read every money figure from `consumption.md` instead, and attribute it by role rather than per dispatch.
 
 Identify escalation events and their trigger reasons.
 
@@ -90,11 +90,11 @@ Scan dispatch entries for: files created or modified (count), tests run and resu
 | Council verdict count | Count of Council Verdict entries in period (0 = "Not activated") |
 | Discovery session count | Count of Discovery Verdict entries in period whose `Depth` is not `skip` (0 = "Not activated"); report declines separately so an offered-and-declined gate is not read as an unused one |
 | Intake check count | Count of Intake Readiness Verdict entries in period (0 = "Not activated") |
-| Human gates passed | Passed ÷ fired |
+| Human gates passed | Passed ├À fired |
 | Cost by role | est_cost_usd grouped by role, sorted descending |
 | Cost by model tier | Token counts and share grouped by model |
 | Dispatch activity | By role: agent, dispatch count, model, key activities |
-| Dispatch success rate | Successful ÷ total × 100 |
+| Dispatch success rate | Successful ├À total ├ù 100 |
 | Autonomy tier distribution | Dispatches by tier (auto / confirm / gated) |
 | Compliance indicators | Artifact evidence, test verification, cost logging, impactful action gating, notifications, open escalations |
 | Key outcomes | Deployments, issues created, tests run, files changed, delivered capabilities |
@@ -113,7 +113,7 @@ Produce a single `.html` file with no external dependencies that renders correct
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Squad Governance Report — <project-name> — <date></title>
+  <title>Squad Governance Report ÔÇö <project-name> ÔÇö <date></title>
   <style>/* all styles inline */</style>
 </head>
 <body>
@@ -136,9 +136,9 @@ Produce a single `.html` file with no external dependencies that renders correct
 
 Dark navy gradient with white text:
 
-* Title: "Squad Governance Report" — large bold white.
-* Subtitle: mode · Period: start to end (N days) · Sub-squad (if applicable).
-* Stats grid: 6 metrics in a row — Coordination Turns, Role Dispatches, Est. Cost (note calibration state), Total Tokens (approximate with ~), Human Gates Fired, Escalations. White numbers with smaller uppercase labels below.
+* Title: "Squad Governance Report" ÔÇö large bold white.
+* Subtitle: mode ┬À Period: start to end (N days) ┬À Sub-squad (if applicable).
+* Stats grid: 6 metrics in a row ÔÇö Coordination Turns, Role Dispatches, Est. Cost (note calibration state), Total Tokens (approximate with ~), Human Gates Fired, Escalations. White numbers with smaller uppercase labels below.
 
 #### Section 1: Governance Gates
 
@@ -146,17 +146,17 @@ Numbered section header ("1. Governance Gates") with a gradient underline.
 
 Summary cards in a row (4 cards):
 
-* **Council Verdicts** — count. Gray "Not activated" badge when 0.
-* **Intake Readiness Checks** — count. Gray "Not activated" badge when 0.
-* **Human Gates Passed** — count. Green "All passed" badge when all passed, red "N blocked" when any blocked.
-* **Escalations** — count. Green "None" badge when 0.
+* **Council Verdicts** ÔÇö count. Gray "Not activated" badge when 0.
+* **Intake Readiness Checks** ÔÇö count. Gray "Not activated" badge when 0.
+* **Human Gates Passed** ÔÇö count. Green "All passed" badge when all passed, red "N blocked" when any blocked.
+* **Escalations** ÔÇö count. Green "None" badge when 0.
 
 When human gates fired > 0, include a **Human Gate Log** table:
 
 | Turn | Date | Gate Type | Action | Status |
 |------|------|-----------|--------|--------|
 
-Status: "✓ PASSED" (green) or "✗ BLOCKED" (red).
+Status: "Ô£ô PASSED" (green) or "Ô£ù BLOCKED" (red).
 
 #### Section 2: Council Verdicts
 
@@ -166,13 +166,13 @@ Status: "✓ PASSED" (green) or "✗ BLOCKED" (red).
 
 #### Section 3: Cost Breakdown
 
-* **Cost by Role** horizontal bar chart (labeled "calibrated turns N–M"). Each role gets a distinct color. Dollar amount shown at end of each bar. Below, a calibration note for uncalibrated turns.
+* **Cost by Role** horizontal bar chart (labeled "calibrated turns NÔÇôM"). Each role gets a distinct color. Dollar amount shown at end of each bar. Below, a calibration note for uncalibrated turns.
 * **Cost by Model Tier** table:
 
 | Model | Role Usage | Token Share |
 |-------|-----------|-------------|
 
-* **Per-Turn Cost Trend** — horizontal bars or dot chart showing estimated cost per calibrated turn, priced from each turn's blocks at that block's `priced_as` rates. Cost is not recorded per turn anywhere, so derive it here or omit the chart; never present a per-turn figure the ledger cannot reproduce.
+* **Per-Turn Cost Trend** ÔÇö horizontal bars or dot chart showing estimated cost per calibrated turn, priced from each turn's blocks at that block's `priced_as` rates. Cost is not recorded per turn anywhere, so derive it here or omit the chart; never present a per-turn figure the ledger cannot reproduce.
 
 #### Section 4: Role Dispatch Activity
 
@@ -197,15 +197,15 @@ Badges: `auto` (green), `confirm` (amber), `gated` (red/orange).
 | Indicator | Status |
 |-----------|--------|
 
-Status: "✓ N/N" (green) for passing, "None required" (gray) for N/A, "✗" (red) for failures. Indicators: artifact evidence for all dispatches, test verification on code changes, cost logged for calibrated turns, impactful actions gated, notifications sent, open escalations.
+Status: "Ô£ô N/N" (green) for passing, "None required" (gray) for N/A, "Ô£ù" (red) for failures. Indicators: artifact evidence for all dispatches, test verification on code changes, cost logged for calibrated turns, impactful actions gated, notifications sent, open escalations.
 
 #### Section 6: Activity Timeline
 
 Vertical timeline with uniform blue dots. Most recent first, max 30 entries:
 
-* Date · Turn N
+* Date ┬À Turn N
 * **Bold title** (descriptive action name)
-* Detail: role → outcome summary
+* Detail: role ÔåÆ outcome summary
 
 Entries represent coordination turns and significant events.
 
@@ -230,7 +230,7 @@ Status badges: Shipped (green), Deployed (green), Complete (green), Planned (blu
 
 ##### Header
 
-* Dark navy gradient: `linear-gradient(135deg, #1e2a4a, #2d3a6a, #3a4a8a)` — full-width, white text.
+* Dark navy gradient: `linear-gradient(135deg, #1e2a4a, #2d3a6a, #3a4a8a)` ÔÇö full-width, white text.
 * Title: large bold white. Subtitle: lighter white (`rgba(255,255,255,0.8)`).
 * Stats grid: 6 metrics in a row inside the header. Large white numbers, uppercase labels in `rgba(255,255,255,0.6)` below. Use a semi-transparent card or no card within the gradient.
 
@@ -259,7 +259,7 @@ Pill-shaped badges with distinct colors per role:
 
 ##### Status badges
 
-* Green: success metrics (✓ passed, 100%, shipped, deployed, complete). Background `#dcfce7`, text `#166534`.
+* Green: success metrics (Ô£ô passed, 100%, shipped, deployed, complete). Background `#dcfce7`, text `#166534`.
 * Amber: in-progress or conditional. Background `#fef3c7`, text `#92400e`.
 * Red: blocked or failed. Background `#fee2e2`, text `#991b1b`.
 * Gray: not activated, none, N/A. Background `#f1f5f9`, text `#64748b`.
@@ -275,7 +275,7 @@ Pill-shaped badges with distinct colors per role:
 
 * Vertical line: `2px` wide, light gray.
 * Uniform blue dots (all the same color, not RAG-coded).
-* Turn-based entries: date · Turn N, bold title, role → outcome.
+* Turn-based entries: date ┬À Turn N, bold title, role ÔåÆ outcome.
 
 ##### Charts
 
@@ -293,19 +293,19 @@ Write the HTML to `outputPath` (or the default path). Create the target director
 
 Report to the caller:
 
-* **Path** — the file written.
-* **Period** — the time window applied.
-* **Metrics summary** — one-line summary of headline numbers (e.g., "12 coordination turns, 8 dispatches, $1.87 est. cost, 2 human gates, 0 escalations").
-* **Grounding** — the squad artifacts that sourced the data.
-* **Gaps** — any sections rendered as "Not activated" or "No data" because the state files lacked the entries.
+* **Path** ÔÇö the file written.
+* **Period** ÔÇö the time window applied.
+* **Metrics summary** ÔÇö one-line summary of headline numbers (e.g., "12 coordination turns, 8 dispatches, $1.87 est. cost, 2 human gates, 0 escalations").
+* **Grounding** ÔÇö the squad artifacts that sourced the data.
+* **Gaps** ÔÇö any sections rendered as "Not activated" or "No data" because the state files lacked the entries.
 
 ## Guardrails
 
 * Squad state is **read-only**. Never modify, delete, or append to any squad state file.
 * Ground every metric in parsed artifact content. Never invent data points, fabricate counts, or extrapolate trends from insufficient data.
 * When an entire section has no data (e.g., no council verdicts exist), render the section with the appropriate empty-state message rather than omitting it.
-* The output HTML must be fully self-contained — no external dependencies, no CDN links, no JavaScript libraries.
+* The output HTML must be fully self-contained ÔÇö no external dependencies, no CDN links, no JavaScript libraries.
 * Respect federation boundaries: when `squad` scopes to a sub-squad, do not read other sub-squads' state.
 * Output path must resolve to the **local filesystem**. Never write to remote locations.
-* When cost data includes uncalibrated turns, annotate the cost figures with calibration state (e.g., "calibrated turns 1–8, turns 9–12 pending calibration"). Do not present uncalibrated totals as precise.
+* When cost data includes uncalibrated turns, annotate the cost figures with calibration state (e.g., "calibrated turns 1ÔÇô8, turns 9ÔÇô12 pending calibration"). Do not present uncalibrated totals as precise.
 * Color thresholds for badges are guidance, not absolute rules. When context makes a different threshold more meaningful, note the context in the footer.

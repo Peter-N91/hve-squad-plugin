@@ -10,9 +10,22 @@ metadata:
 
 ## Why This Exists
 
-Per [ADR-0003](https://github.com/Peter-N91/hve-squad/blob/main/docs/architecture/adr/0003-hve-core-plugin-dependency-gap-mitigation.md), the `hve-squad` plugin does **not** vendor hve-core's domain content. When a consumer installs only this plugin (no `apm install github/hve-core`), the `hve-core` Copilot plugin they may also have installed ships **zero** files from seven domains: **accessibility, security, privacy, RAI, project-planning, design-thinking, and coding-standards**. Most of `squad-roster.instructions.md`'s cast catalog casts against agents in exactly those seven domains — so most roster rows resolve to an absent agent at dispatch time, and the roster's own rule is to **escalate rather than dispatch a partial squad**. This check makes that gap visible before a turn hits it, instead of failing mid-dispatch with an unexplained "agent not found."
+Per `hve-squad`'s own architecture decision (the plugin deliberately does not
+vendor hve-core's domain content), the `hve-squad` plugin does **not** vendor
+hve-core's domain content. When a consumer installs only this plugin (no
+`apm install github/hve-core`), the `hve-core` Copilot plugin they may also
+have installed ships **zero** files from seven domains: **accessibility,
+security, privacy, RAI, project-planning, design-thinking, and
+coding-standards**. Most of `squad-roster.instructions.md`'s cast catalog
+casts against agents in exactly those seven domains — so most roster rows
+resolve to an absent agent at dispatch time, and the roster's own rule is to
+**escalate rather than dispatch a partial squad**. This check makes that gap
+visible before a turn hits it, instead of failing mid-dispatch with an
+unexplained "agent not found."
 
-This check never vendors or duplicates hve-core's content (that would repeat the mistake ADR-0003 rejected) — it only reports what is present versus what the roster expects.
+This check never vendors or duplicates hve-core's content (that would repeat
+the rejected alternative) — it only reports what is present versus what the
+roster expects.
 
 ## Inputs
 

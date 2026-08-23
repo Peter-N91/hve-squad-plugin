@@ -61,9 +61,9 @@ Write the change record under `.copilot-tracking/changes/` per the `rpi-implemen
 
 Return to the coordinator:
 
-* **Scope** — the plan phase or task this dispatch owned.
-* **Changes** — the files changed and a one-line summary per change.
-* **Change Record** — the path of the artifact written under `.copilot-tracking/changes/`.
-* **Validation** — commands run and their results, including anything that could not be validated.
-* **Pending Impactful Actions** — any gated action awaiting human approval, or `none`.
-* **Discrepancies** — anything in the plan that did not hold, or `none`.
+* **Scope** ÔÇö the plan phase or task this dispatch owned.
+* **Changes** ÔÇö the files changed and a one-line summary per change.
+* **Change Record** ÔÇö the path of the artifact written under `.copilot-tracking/changes/`.
+* **Validation** ÔÇö commands run and their results, including anything that could not be validated.
+* **Pending Impactful Actions** ÔÇö any gated action awaiting human approval, or `none`.
+* **Discrepancies** ÔÇö anything in the plan that did not hold, or `none`.

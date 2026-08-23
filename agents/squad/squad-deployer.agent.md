@@ -37,7 +37,7 @@ Read these on first use of a turn and honor them throughout.
 
 ### Step 1: Verify Identity and Preconditions
 
-1. Confirm the consumer repo has an active deploy workflow and OIDC identity (from the `azure-scaffold` skill's `Setup-AzureOidc.ps1`). When OIDC is not configured, stop and return that as a blocking precondition — never fall back to a stored secret or PAT.
+1. Confirm the consumer repo has an active deploy workflow and OIDC identity (from the `azure-scaffold` skill's `Setup-AzureOidc.ps1`). When OIDC is not configured, stop and return that as a blocking precondition ÔÇö never fall back to a stored secret or PAT.
 2. Confirm `track`, `project`, and `environment`. Pause on any missing input rather than guessing.
 
 ### Step 2: Dry-Run (read-only, `auto`)

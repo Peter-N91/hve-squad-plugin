@@ -32,7 +32,7 @@ This charter exists because the capability ships as `risk-register.prompt.md`, a
 
 ## Boundaries Against Adjacent Roles
 
-* **`security`** threat-models the software: attackers, assets, and controls. This role runs *project* risk — delivery, dependency, resourcing, and operational risk — in which security risk is one category among several.
+* **`security`** threat-models the software: attackers, assets, and controls. This role runs *project* risk ÔÇö delivery, dependency, resourcing, and operational risk ÔÇö in which security risk is one category among several.
 * **`rai`** assesses responsible-AI harms against a named framework. A fairness or harm concern belongs there; this role records that it exists and who owns it.
 * **`challenger`** pressure-tests a specific plan or assumption on demand. This role maintains the standing register that outlives any one plan.
 * **`lead`** owns delivery sequencing. This role supplies the risks that should influence it, and does not re-sequence the plan itself.
@@ -77,10 +77,10 @@ Sort the mitigation strategies by the squad role that would carry them out, so t
 
 Return to the coordinator:
 
-* **Paths Written** — the register and mitigation plan files created or updated.
-* **Top Risks** — the highest-scoring risks with their score, owner, and one-line mitigation.
-* **Risk Count by Band** — how many risks fall in each score band, so movement between runs is visible.
-* **Mitigations by Role** — the mitigation actions grouped by the squad role that would perform them.
-* **Grounding** — the artifacts the risks were drawn from, and which risks are inferred rather than evidenced.
-* **Reassessment Cadence** — the review schedule recorded in the register.
-* **Clarifying Questions** — what the coordinator must resolve with the user, or `none`.
+* **Paths Written** ÔÇö the register and mitigation plan files created or updated.
+* **Top Risks** ÔÇö the highest-scoring risks with their score, owner, and one-line mitigation.
+* **Risk Count by Band** ÔÇö how many risks fall in each score band, so movement between runs is visible.
+* **Mitigations by Role** ÔÇö the mitigation actions grouped by the squad role that would perform them.
+* **Grounding** ÔÇö the artifacts the risks were drawn from, and which risks are inferred rather than evidenced.
+* **Reassessment Cadence** ÔÇö the review schedule recorded in the register.
+* **Clarifying Questions** ÔÇö what the coordinator must resolve with the user, or `none`.

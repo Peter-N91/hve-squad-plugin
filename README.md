@@ -7,18 +7,18 @@ GitHub Copilot CLI plugin distribution tree.
 It is **never hand-edited**. Its content (`agents/`, `skills/`, and
 `.github/plugin/plugin.json`) is regenerated only when `hve-squad` cuts a
 release, extracted from that release's immutable git tag — never from a live
-working tree or a moving branch. See
-`Peter-N91/hve-squad`'s
-[ADR-0001](https://github.com/Peter-N91/hve-squad/blob/main/docs/architecture/adr/0001-plugin-distribution-repo-topology.md)
-(build-provenance amendment: tag-pinned builds only) and
-[ADR-0006](https://github.com/Peter-N91/hve-squad/blob/main/docs/architecture/adr/0006-plugin-distribution-moves-to-separate-repo.md)
-(this repository's existence: the generated plugin distribution tree lives
-here, outside `hve-squad`'s own working tree, mirroring the existing
-`hve-squad-mcp` sibling-repo pattern) for the full rationale.
+working tree or a moving branch.
+
+This repository exists so the generated plugin distribution tree lives
+outside `hve-squad`'s own working tree, mirroring the existing
+`hve-squad-mcp` sibling-repo pattern. `hve-squad`'s own architecture decision
+records (the build-provenance rule behind this repo, and the decision to
+split it out as a separate repository) are internal design records and are
+not published alongside this repo's own history.
 
 ## Current source provenance
 
-- Built from `Peter-N91/hve-squad` tag `v0.16.0-pre`
+- Built from `Peter-N91/hve-squad` tag `v0.16.0`
 - Extraction date: 2026-08-23
 
 ## Structure
@@ -37,8 +37,7 @@ next time this repository is regenerated from a `hve-squad` release tag. See
 ## Known gap: hve-core plugin does not cover seven domains
 
 Installing only this plugin (no `apm install`) is the "zero-install, works
-everywhere" path this plugin exists for. It has one real limitation, per
-[ADR-0003](https://github.com/Peter-N91/hve-squad/blob/main/docs/architecture/adr/0003-hve-core-plugin-dependency-gap-mitigation.md):
+everywhere" path this plugin exists for. It has one real limitation:
 the `hve-core` Copilot plugin — even when a consumer also installs it — ships
 **zero files** from seven domains that most of the squad's cast catalog
 (`squad-roster.instructions.md`) casts against: **accessibility, security,

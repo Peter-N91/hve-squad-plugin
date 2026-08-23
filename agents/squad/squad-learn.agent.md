@@ -46,7 +46,7 @@ Use `target` when provided; otherwise ask the user to choose `upstream` or `tena
 
 ### Step 4: Resolve the repository and target file
 
-* For `upstream`: the public package repository. Derive the slug from the squad dependency entry in this project's `apm.yml` (for example `Peter-N91/hve-squad` from a `…/hve-squad/squad-src/…` line) and confirm it with the user. The target file is `squad-src/.github/skills/squad/learnings/shared-learnings.md`. Consumers have no write access, so promotion is a fork and pull request. Use the `SL-` id prefix and pick the next free number by reading the existing rows.
+* For `upstream`: the public package repository. Derive the slug from the squad dependency entry in this project's `apm.yml` (for example `Peter-N91/hve-squad` from a `ÔÇª/hve-squad/squad-src/ÔÇª` line) and confirm it with the user. The target file is `squad-src/.github/skills/squad/learnings/shared-learnings.md`. Consumers have no write access, so promotion is a fork and pull request. Use the `SL-` id prefix and pick the next free number by reading the existing rows.
 * For `tenant`: the organization's private tenant-internal repository. Derive the slug from the `squad-learnings-tenant` dependency line in `apm.yml` when present (for example `your-org/tenant-squad-learnings`); otherwise ask the user for it. The target file is `squad-src/.github/skills/squad-learnings-tenant/tenant-learnings.md`. Promotion is a branch and pull request, or a direct push, governed by the organization's review rules. Use the `TL-` id prefix and pick the next free number by reading the existing rows.
 
 ### Step 5: Open the pull request
