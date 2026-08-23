@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "hooks/scripts/session-start-check.sh",
+        "powershell": "hooks/scripts/session-start-check.ps1",
+        "timeoutSec": 10
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "matcher": "bash|powershell",
+        "bash": "hooks/scripts/impactful-action-gate.sh",
+        "powershell": "hooks/scripts/impactful-action-gate.ps1",
+        "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "matcher": "create|edit",
+        "bash": "hooks/scripts/state-write-guard.sh",
+        "powershell": "hooks/scripts/state-write-guard.ps1",
+        "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "matcher": "task",
+        "bash": "hooks/scripts/dispatch-guards.sh",
+        "powershell": "hooks/scripts/dispatch-guards.ps1",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "matcher": "bash|powershell",
+        "bash": "hooks/scripts/notification-audit.sh",
+        "powershell": "hooks/scripts/notification-audit.ps1",
+        "timeoutSec": 10
+      }
+    ],
+    "subagentStop": [
+      {
+        "type": "command",
+        "bash": "hooks/scripts/autonomous-escalation-check.sh",
+        "powershell": "hooks/scripts/autonomous-escalation-check.ps1",
+        "timeoutSec": 10
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "hooks/scripts/prompt-injection-note.sh",
+        "powershell": "hooks/scripts/prompt-injection-note.ps1",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

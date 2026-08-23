@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "hve-squad": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@hve-squad/mcp"
+      ]
+    }
+  }
+}

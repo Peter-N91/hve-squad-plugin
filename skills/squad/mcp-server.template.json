@@ -39,6 +39,20 @@
 // Credentials
 //   None. stdio inherits the local user's trust; no token, secret, or API key
 //   is stored in this file.
+//
+// Plugin manifest generation (P03-T04)
+//   The plugin's own `.mcp.json` at the hve-squad-plugin repository root is
+//   GENERATED from this template's Option A entry (P01-T02 resolved publish
+//   over vendor), translated from the `.vscode/mcp.json` "servers" key to the
+//   plugin manifest's confirmed "mcpServers" key (P01-T01). This template
+//   remains the single source of truth in squad-src/ — do not hand-author a
+//   divergent copy in the plugin repository; regenerate `.mcp.json` from here
+//   instead. As of this generation, `@hve-squad/mcp` is NOT YET published to
+//   npm (`npm view @hve-squad/mcp version` returns 404) — Option A is still
+//   the correct and only entry per the resolved decision, but a live
+//   `npx @hve-squad/mcp` start will fail until the sibling hve-squad-mcp
+//   repository's publish-pipeline task (P01-T06, items 1-4) completes and an
+//   actual `npm publish` runs. See hve-squad-plugin's change record for P03.
 {
   "servers": {
     "hve-squad": {

@@ -118,3 +118,73 @@ The squad captures an optional contact at build time and pings it for approvals.
 3. For `github-issue`, the human approves remotely with a keyword comment (`/approve`, `/approve-all`, `/changes: <note>`, `/stop`) or a `squad/*` label. Only the registered handle or a repo collaborator can approve, and only the keyword acts — comment prose is never executed as a command. An unattended run resumes via a host-side poll loop or a GitHub Action on `issue_comment` (the inbound half of Watch Mode / DR-01).
 4. In `mode=autopilot`, a ping fires at each Human Gate and at final-outcome validation. In interactive mode, a ping fires at each step gate. In `mode=autonomous`, a ping fires on the loop's mandatory escalations.
 5. The Scribe appends every fired notification to `notifications.md` (append-only).
+
+The full notification contract — approval channels, capture at build time, federation inheritance, delivery model, remote GitHub-issue approval, and the notification payload shape — lives in [notifications-and-watch.md](notifications-and-watch.md), ported from `squad-notifications.instructions.md`.
+
+## Routing Table Procedure
+
+Routing decides *who acts* once the coordinator has classified a request. The roster ([profiles-and-packs.md](profiles-and-packs.md)) decides *which agent* fills each role, and the Scribe write procedure ([scribe-procedure.md](scribe-procedure.md)) decides *how outcomes persist*. Ported from `squad-routing.instructions.md`; the routing table itself is reference lookup, appended here alongside the gates it enforces.
+
+The routing table lives at `.copilot-tracking/squad/routing.md`, seeded on first use from the default rules below and updated only through the Squad Scribe. Each row maps a request pattern to one or more roles, an autonomy tier, and a parallel-eligible flag. **The `Role(s)` column holds role ids, never agent names** — an agent name resolves to no roster row and silently drops that row's `Member Name`, `Model Tier`, Selection Cues, and `Deliverable Root`.
+
+### Autonomy Tiers
+
+* `auto` — the role proceeds and returns findings without pausing; suitable for read-only research and review.
+* `confirm` — the role drafts an action or plan and the coordinator confirms before any change lands.
+* `escalate` — the coordinator stops and routes the decision to the user before dispatching.
+* `auto-validated` — the opt-in autonomous tier (see *Autonomous Procedure* above). Never downgrades `confirm` for cost-impacting or irreversible-write actions.
+
+### Default Routing Rules
+
+| Pattern / Keyword                          | Role(s)                | Autonomy Tier | Parallel-Eligible |
+|--------------------------------------------|-------------------------|---------------|--------------------|
+| research, investigate, explore, find out   | researcher             | auto          | yes                |
+| plan, break down, sequence, design plan    | lead                   | confirm       | no                 |
+| implement, build, code, fix                | developer              | confirm       | no                 |
+| review, validate, check quality            | tester                 | auto          | yes                |
+| write tests, add test coverage, run the tests, test plan, test case, edge case, boundary case, hostile input, reproduce the bug, regression test, flaky test, exploratory testing | qa-engineer | confirm | no |
+| challenge, pressure-test, poke holes, devil's advocate, what could go wrong | challenger | auto | yes |
+| author prompt, write agent file, refactor instructions, analyse skill | prompt-engineer | confirm | no |
+| brainstorm, ideate, shape this idea, explore options, what should we build, help me think through, we want to, kick off a brief | designer, analyst | confirm | no |
+| validate requirements, requirements readiness, requirements complete, requirements clear, intake check, are the requirements ready | intake-validator | auto | yes |
+| security, threat, vulnerability, STRIDE    | security                | confirm       | yes                |
+| supply chain, SBOM, SLSA, provenance, OpenSSF Scorecard, Sigstore, signed release, dependency pinning | supply-chain | confirm | yes |
+| CVE, vulnerability triage, VEX, OpenVEX, exploitability, is this CVE exploitable, advisory disposition, not affected | vuln-manager | confirm | yes |
+| privacy, personal data, PII, DPIA, GDPR, data subject, retention | privacy | confirm | yes |
+| accessibility, a11y, WCAG, ARIA, screen reader, keyboard navigation, Section 508, EN 301 549, VPAT, conformance audit | accessibility | confirm | yes |
+| design, UX, UI, wireframe, journey, interaction design | designer | confirm | yes |
+| requirements, BRD, PRD, user story, acceptance criteria | analyst | confirm | yes |
+| journey map, persona, design thinking, empathize, ideate, problem statement | designer | confirm | yes |
+| roadmap, backlog, epic, sprint, prioritize, story, PRD to work items, work item hierarchy | product-owner | confirm | no |
+| create work items in ADO, push backlog to Azure DevOps, create Jira issues, apply the handoff, execute handoff, sync work items to the tracker | backlog-executor | confirm | no |
+| experiment, hypothesis, validate assumption, MVE, riskiest assumption | experimenter | confirm | yes |
+| presentation, deck, slides, executive summary, pitch | presenter | confirm | no |
+| document, write up, summarize for stakeholders, readme | technical-writer | confirm | no |
+| data profile, data dictionary, EDA, exploratory analysis, notebook, dashboard, dataset, Power BI, DAX, semantic model, star schema, report design, Fabric, Lakehouse, OneLake | data-scientist | confirm | no |
+| architecture, system design, components    | architect               | auto          | yes                |
+| responsible AI, RAI, fairness, harm        | rai                     | confirm       | yes                |
+| verify finding, confirm claim, fact-check  | fact-checker            | auto          | yes                |
+| risk register, project risk, probability and impact, risk matrix, mitigation plan, contingency, what are the risks | risk-manager | confirm | yes |
+| SLO, SLA, error budget, latency budget, load test plan, capacity planning, performance target, throughput, soak test | performance | confirm | yes |
+| observability, instrumentation, telemetry design, spans, traces, metrics, structured logging, OpenTelemetry, what should we emit | observability | confirm | yes |
+| author IaC, write Bicep, write Terraform, convert LLD to infra, infrastructure as code | iac-author | confirm | no |
+| deploy, provision, what-if, terraform plan, terraform apply, az deployment | deployer | confirm | no |
+| as-built, resource inventory, compliance matrix, operations runbook, DR plan, document deployed infrastructure | asbuilt-author | confirm | no |
+| diagnose, troubleshoot, resource health, why is resource failing, investigate deployed, policy check, incident, outage, sev1, sev2, on-call, postmortem, root cause | azure-diagnose | auto | yes |
+| validate, cross-check, pre-implementation review, council, design review, go/no-go, implement-and-cost, implement-and-risk | architect, security, cost-manager, product-owner, rai (optional) | confirm | yes |
+| modernize, upgrade framework, migrate, port legacy, .NET upgrade, Java migration, dependency upgrade, containerize | modernizer | confirm | no |
+| sql migration, database migration, schema migration, data migration, sql server to azure, migration prerequisites, migration readiness checklist, downtime migration plan, cutover strategy | modernizer | confirm | no |
+| re-platform, rewrite, port to, rebuild in, cross-stack rewrite, Node to .NET, React to Angular, convert to another language | modernizer | confirm | no |
+| GitHub Actions, workflow file, CI pipeline, pipeline hardening, pin actions to SHA, OIDC in CI, CI minutes, build cost, deployment environment, release train, rollout plan, rollback plan, Azure DevOps pipeline | release-engineer | confirm | no |
+| GitLab merge request, GitLab pipeline, GitLab issue, open an MR | product-owner | escalate | no |
+
+Packs (`power-platform`, `m365-copilot`, `aws`) add their own rows only when applied; see [profiles-and-packs.md](profiles-and-packs.md). Thirteen default rows carry a note in the source instruction file explaining a non-obvious split (`tester` vs. `qa-engineer` on read vs. write, `accessibility`'s two owners, `security`/`supply-chain`/`vuln-manager`'s three-way split, and others) — consult `squad-src/.github/instructions/squad/squad-routing.instructions.md` in the upstream APM package for that prose if a routing decision seems ambiguous; this reference carries the table, not every explanatory note.
+
+### Filtering to the Active Roster
+
+The seeded `routing.md` contains only the rules whose role exists in the project's `team.md`. When a profile seeds a subset of the cast, the Squad Scribe drops every routing row whose role is not on the seeded team. When a request matches a pattern whose role is absent from the active roster, the coordinator escalates and offers to add the role or switch profiles.
+
+### Dispatch Rules
+
+* Match the most specific pattern first. When several patterns match, prefer the one whose role most directly owns the requested outcome.
+* Dispatch all parallel-eligible roles for a turn concurrently; run non-parallel roles (such as planning and implementation) sequentially.
