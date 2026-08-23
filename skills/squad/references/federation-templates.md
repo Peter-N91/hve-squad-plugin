@@ -52,7 +52,7 @@ description: "Squad federation meta-routing: request patterns mapped to the sub-
 
 ### decisions.md (federation root)
 
-Append-only log of federation-level routing decisions ÔÇö which sub-squad handled a request and why. Each entry references the sub-squad's own decision entries so the two levels stay linked. Uses the same append-only contract as a per-squad `decisions.md`.
+Append-only log of federation-level routing decisions — which sub-squad handled a request and why. Each entry references the sub-squad's own decision entries so the two levels stay linked. Uses the same append-only contract as a per-squad `decisions.md`.
 
 ```markdown
 ---
@@ -68,7 +68,7 @@ Entries are appended below in chronological order. Each entry records which sub-
 
 ### state.json (federation root)
 
-Machine-readable federation status. Replace semantics ÔÇö the Scribe overwrites it as the federation advances.
+Machine-readable federation status. Replace semantics — the Scribe overwrites it as the federation advances.
 
 ```json
 {
@@ -90,7 +90,7 @@ Machine-readable federation status. Replace semantics ÔÇö the Scribe overwrit
 
 `subSquads` lists every registered sub-squad name (mirroring `federation.md`); `activeSubSquads` lists the sub-squad(s) dispatched on the current turn. `currentRun.sessionModel` and `currentRun.modelOverrides` are the federation-wide defaults a sub-squad inherits unless its own `state.json` sets them. Each sub-squad keeps its own `state.json` under `members/<name>/` per `.github/instructions/squad/squad-state.instructions.md`.
 
-`mode` and `currentRun` are additive fields for federation-level autopilot (`.github/instructions/squad/squad-federation-autopilot.instructions.md`). `mode` records the autonomy mode in effect for the current federation turn (`interactive` or `autopilot`); `currentRun` aggregates the estimated cost and credits summed across every sub-squad inner run of the current meta-run, so the federation-level cost ceiling reads one number. All of these are backward-compatible ÔÇö a federation that never runs autopilot leaves `mode` at `interactive` and `currentRun` at zero, and `sessionModel` / `modelOverrides` default to empty ÔÇö so the `schemaVersion` bumps (`1.0` ÔåÆ `1.1` for autopilot, `1.1` ÔåÆ `1.2` for model attribution) keep existing federation state valid.
+`mode` and `currentRun` are additive fields for federation-level autopilot (`.github/instructions/squad/squad-federation-autopilot.instructions.md`). `mode` records the autonomy mode in effect for the current federation turn (`interactive` or `autopilot`); `currentRun` aggregates the estimated cost and credits summed across every sub-squad inner run of the current meta-run, so the federation-level cost ceiling reads one number. All of these are backward-compatible — a federation that never runs autopilot leaves `mode` at `interactive` and `currentRun` at zero, and `sessionModel` / `modelOverrides` default to empty — so the `schemaVersion` bumps (`1.0` → `1.1` for autopilot, `1.1` → `1.2` for model attribution) keep existing federation state valid.
 
 ### history/autopilot-run-\<id>.md (federation root)
 
