@@ -51,11 +51,13 @@
       <p>
         This plugin's <code>.mcp.json</code> also registers the companion
         <a href="https://github.com/Peter-N91/hve-squad-mcp">Peter-N91/hve-squad-mcp</a> server
-        over stdio. A host that talks MCP but has no plugin/agent-dispatch surface of its own
-        (or a delegated-mode workflow that prefers tool calls) can call the squad through five
-        coarse intent tools — <code>squad_research</code>, <code>squad_plan</code>,
-        <code>squad_review</code>, <code>squad_architect</code>, and <code>squad_run</code> —
-        instead of addressing an agent by name.
+        over stdio. <strong>This is the same host</strong> — Copilot CLI, VS Code, and the desktop
+        app all support MCP tool-calling natively, alongside their own agent-dispatch surface, not
+        instead of it. Surface 2 is not reserved for some other client that lacks agents; it gives
+        the <em>same</em> session an additional entry point: the model can autonomously call
+        <code>squad_research</code>, <code>squad_plan</code>, <code>squad_review</code>,
+        <code>squad_architect</code>, or <code>squad_run</code> mid-conversation, without anyone
+        naming an agent first.
       </p>
       <p>
         In <strong>delegated mode</strong> (the current, Phase 0 execution model), each tool call
@@ -63,6 +65,13 @@
         request; the calling host's own agent loop is what actually runs
         <code>runSubagent</code>/<code>task</code> against it. The MCP server itself calls no
         model and holds no credentials — it is a router, not a runtime.
+      </p>
+      <p>
+        A genuinely different host — Copilot Studio or M365 Copilot — instead reaches
+        <code>hve-squad-mcp</code> through its separate <strong>embedded/remote HTTP mode</strong>,
+        a distinct Azure-hosted deployment documented in that repository's own
+        <code>host/RUNBOOK.md</code>. That mode is not wired through this plugin's
+        <code>.mcp.json</code> at all.
       </p>
 
       <div class="mermaid">
@@ -74,27 +83,28 @@ flowchart TD
         M[".mcp.json<br/>registers @hve-squad/mcp"]
     end
 
-    subgraph HostDirect["Host with agent-dispatch surface"]
-        HD["Copilot CLI / VS Code / desktop app"]
+    subgraph Host["Copilot CLI / VS Code / desktop app (one session, two paths)"]
+        HD["Direct agent-dispatch path<br/>(user or agent names hve-squad:squad-*)"]
+        HM["Autonomous tool-call path<br/>(model calls squad_* mid-conversation)"]
     end
 
-    subgraph HostMCP["Host with MCP-only surface"]
-        HM["Any MCP-aware client"]
-    end
-
-    subgraph MCPServer["Peter-N91/hve-squad-mcp"]
+    subgraph MCPServer["Peter-N91/hve-squad-mcp (stdio, delegated mode)"]
         T["5 coarse tools:<br/>squad_research, squad_plan,<br/>squad_review, squad_architect, squad_run"]
     end
 
-    HD -- "direct dispatch<br/>hve-squad:squad-*" --> A
+    subgraph Remote["Copilot Studio / M365 (separate deployment, not via this plugin)"]
+        R["hve-squad-mcp embedded/HTTP mode"]
+    end
+
+    HD -- "direct dispatch" --> A
     A --> S
     S --> H
 
     HM -- "tool call" --> T
     T -- "returns persona + routing row<br/>+ framed dispatch request" --> HM
-    HM -- "host's own runSubagent/task<br/>runs the actual dispatch" --> A
+    HM -- "same host's runSubagent/task<br/>runs the actual dispatch" --> A
 
-    M -.->|"registers"| T
+    M -.->|"registers (stdio)"| T
       </div>
 
       <h2>Known open item: version-pinning gap</h2>
