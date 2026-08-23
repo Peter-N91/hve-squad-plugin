@@ -28,9 +28,9 @@ Read this file first, then read only the reference files your role names in its 
 
 The Scribe reads `00-index.md`, `scribe-procedure.md`, and `entry-schemas.md` on every turn, and reads `consumption.md`, `seed-templates.md`, and `federation-templates.md` only when the turn's payload writes their files. The coordinators read `seed-templates.md` and `federation-templates.md` only to verify deliverable roots during Init or a federation change.
 
-## Companion instruction files
+## Companion hook rules and reference files
 
-The `squad` skill complements eleven instruction files that auto-apply when squad state is touched. Their `applyTo` globs only fire in a host that loads modular instructions, so a rule that must hold unconditionally belongs in a reference file above, not only here.
+In the plugin distribution, these rules no longer ship as `.instructions.md` files: deterministic enforcement moves to `hooks.json` and procedural/reference content moves into the reference files above. The bullets below are pending their P03 rewrite to cite the hook and reference-file targets directly.
 
 * `.github/instructions/squad/squad-roster.instructions.md` — roster schema and cast catalog.
 * `.github/instructions/squad/squad-routing.instructions.md` — routing table and escalation rules.

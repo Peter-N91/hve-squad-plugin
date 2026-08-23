@@ -1,0 +1,18 @@
+{
+  "name": "hve-squad-plugin",
+  "owner": {
+    "name": "Peter-N91"
+  },
+  "metadata": {
+    "description": "Marketplace for the hve-squad GitHub Copilot plugin, generated and release-gated from Peter-N91/hve-squad.",
+    "version": "0.16.1-pre+local"
+  },
+  "plugins": [
+    {
+      "name": "hve-squad",
+      "description": "Plugin distribution tree for hve-squad: 27 Squad Copilot agents and the squad skill (including 5 invocation skills under skills/squad/invocations/), generated and release-gated from Peter-N91/hve-squad.",
+      "version": "0.16.1-pre+local",
+      "source": "."
+    }
+  ]
+}

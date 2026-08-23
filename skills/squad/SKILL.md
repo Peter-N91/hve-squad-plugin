@@ -14,7 +14,7 @@ metadata:
 
 The squad is a user-invocable Squad Coordinator that dispatches a reusable cast of deployed HVE Core agents in parallel and persists roster, routing, decisions, and per-agent history under `.copilot-tracking/squad/`. There is no separate runtime: every squad verb is a thin convention over an existing HVE Core mechanism.
 
-This skill packages the coordinator's operating procedure and the seed templates it stamps out on first run. The procedure lives in the reference files listed under [Procedure](#procedure) below; the eleven companion instruction files that auto-apply when squad state is touched are catalogued in [references/00-index.md](references/00-index.md).
+This skill packages the coordinator's operating procedure and the seed templates it stamps out on first run. The procedure lives in the reference files listed under [Procedure](#procedure) below; the companion hook rules and reference files it depends on are catalogued in [references/00-index.md](references/00-index.md).
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ The procedure is split across the reference files below so that each agent loads
 | [consumption.md](references/consumption.md)                   | Consumption ledger templates and the cost estimator                            |
 | [federation-templates.md](references/federation-templates.md) | Federation-root seed templates                                                 |
 
-Files at the skill root that are not part of this split — `learnings/shared-learnings.md`, `squad-watch.workflow.yml`, `github-approval-watcher.workflow.yml`, `mcp.template.json`, `mcp-server.template.json`, and `squad-task.issue-template.yml` — keep their existing paths.
+Files at the skill root that are not part of this split — `learnings/shared-learnings.md`, `squad-watch.workflow.yml`, `github-approval-watcher.workflow.yml`, `mcp.template.json`, `mcp-server.template.json`, `squad-task.issue-template.yml`, and `invocations/` (the 5 prompt-derived invocation skills) — keep their existing paths.
 
 ## Attribution
 
