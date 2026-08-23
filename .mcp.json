@@ -5,7 +5,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@hve-squad/mcp"
+        "@hve-squad/mcp@0.7.0"
       ]
     }
   }

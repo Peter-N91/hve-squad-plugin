@@ -107,22 +107,39 @@ flowchart TD
     M -.->|"registers (stdio)"| T
       </div>
 
-      <h2>Known open item: version-pinning gap</h2>
+      <h2>What's actually pinned, and what isn't</h2>
+      <p>
+        The delegated-mode server does <strong>not</strong> ship or use a bundled copy of the
+        squad's agent personas at all — its own source code says so explicitly: the
+        <code>systemPrompt</code> a tool call returns is a short, hand-written paraphrase of just
+        the Dispatch Discipline rule, deliberately <em>not</em> a copy of the real
+        <code>.agent.md</code> content. The host then runs its own dispatch against the
+        <strong>real, tag-pinned agent files this plugin installed</strong> — so which
+        <code>@hve-squad/mcp</code> version answered the tool call has no bearing on which
+        persona actually runs. There is no "two copies of the cast that can drift" risk here.
+      </p>
       <div class="callout warn">
         <p>
-          <strong>This is an open item, not a solved one.</strong> This plugin's content
-          (<code>agents/</code>, <code>skills/</code>, <code>.github/plugin/plugin.json</code>) is
-          rebuilt and release-gated from an immutable <code>hve-squad</code> git tag — its own
-          <code>README.md</code> records exactly which tag it was built from
-          (<code>Peter-N91/hve-squad</code> <code>v0.16.0</code> at time of writing). The
-          <code>@hve-squad/mcp</code> server it wires up via <code>.mcp.json</code> is a
-          <strong>separate repository with its own bundled cast and its own release cadence</strong>.
-          There is currently no mechanism that guarantees the plugin's tag-built agent roster and
-          the MCP server's bundled cast are pinned to the same underlying <code>hve-squad</code>
-          revision at any given moment — a consumer installing both today could, in principle, get
-          a plugin agent set and an MCP-routed cast that drifted apart between releases. Closing
-          this gap (a shared version-pin contract between the two repos) is tracked as future work
-          upstream in <code>hve-squad</code>, not resolved by this plugin.
+          <strong>What was actually missing (now fixed):</strong> <code>.mcp.json</code> used to
+          reference a bare <code>@hve-squad/mcp</code>, which <code>npx</code> resolves to
+          whatever is currently <code>@latest</code> — meaning two installs on two different days
+          could silently run different server code, with no reproducibility guarantee. This
+          plugin now pins an <strong>exact, tested version</strong>
+          (<code>@hve-squad/mcp@0.7.0</code> at time of writing). Bumping this pin is a
+          deliberate action, separate from rebuilding this plugin's own agent content — the
+          generator (<code>Build-SquadPlugin.ps1</code>'s <code>-McpVersion</code>) never
+          silently re-pins it on an unrelated content rebuild.
+        </p>
+        <p>
+          <strong>What remains an open, smaller consideration:</strong> the coarse routing
+          metadata (<code>tools.catalog.yml</code> / <code>generated/mcp-tools.schema.json</code>,
+          which do ship inside the npm package) is generated from <code>hve-squad-mcp</code>'s
+          own copy of <code>squad-routing.instructions.md</code> at its last release. If
+          <code>hve-squad</code>'s routing table changes and the pinned MCP version isn't bumped
+          to match, a tool call's reported tier/council/gates could go slightly stale relative to
+          the plugin's current agents — a routing-table staleness question, not an agent-content
+          mismatch. The mitigation is the same discipline as above: re-test and deliberately
+          re-pin when you know routing changed, rather than chasing <code>@latest</code>.
         </p>
       </div>
 
