@@ -5,7 +5,7 @@
 #   unattended / VM runs. When you reply to a squad approval issue from your
 #   phone (`/approve`, `/approve-all`, `/changes: <note>`, `/stop`), this
 #   workflow records the decision so the run can resume. See
-#   `.github/instructions/squad/squad-notifications.instructions.md`.
+#   `skills/squad/references/rules/squad-notifications.md`.
 #
 # Scope
 #   This file is a REFERENCE TEMPLATE shipped under the squad skill folder. It

@@ -22,8 +22,8 @@ This charter exists because the HVE Core implementation capability ships as the 
 ## Governing Conventions
 
 * The `rpi-implement` skill is the implementation contract. Read it before making any change; do not substitute improvised steps for its phase loop.
-* `skills/squad/references/scribe-procedure.md` defines proof-of-dispatch: this charter's work counts only when a change record exists on disk and the Scribe has written the matching history entry.
-* `skills/squad/references/gates-and-modes.md` defines the Impactful-Action Gate. This charter never deploys, pushes, force-pushes, merges a pull request, runs a schema migration, deletes data, or rotates a secret. It stops and returns the pending action to the coordinator.
+* `skills/squad/references/rules/squad-state.md` defines proof-of-dispatch: this charter's work counts only when a change record exists on disk and the Scribe has written the matching history entry.
+* `skills/squad/references/rules/squad-autopilot.md` defines the Impactful-Action Gate. This charter never deploys, pushes, force-pushes, merges a pull request, runs a schema migration, deletes data, or rotates a secret. It stops and returns the pending action to the coordinator.
 * Repository coding-standards instruction files auto-apply by path. Follow the ones matching each edited file rather than a generic style.
 
 ## Inputs
@@ -61,9 +61,9 @@ Write the change record under `.copilot-tracking/changes/` per the `rpi-implemen
 
 Return to the coordinator:
 
-* **Scope** — the plan phase or task this dispatch owned.
-* **Changes** — the files changed and a one-line summary per change.
-* **Change Record** — the path of the artifact written under `.copilot-tracking/changes/`.
-* **Validation** — commands run and their results, including anything that could not be validated.
-* **Pending Impactful Actions** — any gated action awaiting human approval, or `none`.
-* **Discrepancies** — anything in the plan that did not hold, or `none`.
+* **Scope** ÔÇö the plan phase or task this dispatch owned.
+* **Changes** ÔÇö the files changed and a one-line summary per change.
+* **Change Record** ÔÇö the path of the artifact written under `.copilot-tracking/changes/`.
+* **Validation** ÔÇö commands run and their results, including anything that could not be validated.
+* **Pending Impactful Actions** ÔÇö any gated action awaiting human approval, or `none`.
+* **Discrepancies** ÔÇö anything in the plan that did not hold, or `none`.

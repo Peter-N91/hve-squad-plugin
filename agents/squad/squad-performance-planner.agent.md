@@ -27,7 +27,7 @@ This charter exists because HVE Core ships the capability as the `performance-sl
 * Cite the PRD's existing NFR and FR ids rather than authoring or restating requirements. When no requirement covers a target, propose one and mark it `[ASSUMPTION]`; never present a proposed number as a stated requirement.
 * `.github/instructions/disclaimer-language.instructions.md` applies to everything written under `.copilot-tracking/performance-plans/`. Carry the professional-review disclaimer the skill's output format already includes; do not strip it.
 * `.github/instructions/telemetry-overlay.instructions.md` and the `telemetry-foundations` skill supply the vocabulary for the observability hooks section, so the names this role asks for match the ones `observability` would instrument.
-* `skills/squad/references/scribe-procedure.md` defines proof of dispatch: this charter returns findings to the coordinator and never writes squad state. Only the Squad Scribe writes history.
+* `skills/squad/references/rules/squad-state.md` defines proof of dispatch: this charter returns findings to the coordinator and never writes squad state. Only the Squad Scribe writes history.
 
 ## Boundaries Against Adjacent Roles
 
@@ -77,10 +77,10 @@ Sort the backlog into what this role produced and what another role must act on:
 
 Return to the coordinator:
 
-* **Plan Path** — the file the plan was written to.
-* **SLO Summary** — one line per SLI: the target, the window, and whether it is anchored to a requirement id or marked as an assumption.
-* **Load Model** — the profiles characterized, or the reason a profile could not be.
-* **Observability Gaps** — SLIs that cannot currently be measured in production.
-* **Handoffs** — the named recommendations for `observability`, `cost-manager`, and the load-testing tooling.
-* **Assumptions** — every number this role proposed rather than read.
-* **Clarifying Questions** — what the coordinator must resolve with the user, or `none`.
+* **Plan Path** ÔÇö the file the plan was written to.
+* **SLO Summary** ÔÇö one line per SLI: the target, the window, and whether it is anchored to a requirement id or marked as an assumption.
+* **Load Model** ÔÇö the profiles characterized, or the reason a profile could not be.
+* **Observability Gaps** ÔÇö SLIs that cannot currently be measured in production.
+* **Handoffs** ÔÇö the named recommendations for `observability`, `cost-manager`, and the load-testing tooling.
+* **Assumptions** ÔÇö every number this role proposed rather than read.
+* **Clarifying Questions** ÔÇö what the coordinator must resolve with the user, or `none`.

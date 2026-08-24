@@ -20,10 +20,10 @@ Execute Azure deployments of the Infrastructure-as-Code authored under `infra/{t
 
 Read these on first use of a turn and honor them throughout.
 
-* `skills/squad/references/gates-and-modes.md` defines the Impactful-Action Gate. Every deploy (`create`/`apply`), destructive operation, and production change is gated there.
-* `skills/squad/references/gates-and-modes.md` defines the Mandatory Escalation Triggers this role never bypasses (production deploys, destructive infra operations, `terraform apply -auto-approve`, `az` deletes).
+* `skills/squad/references/rules/squad-autopilot.md` defines the Impactful-Action Gate. Every deploy (`create`/`apply`), destructive operation, and production change is gated there.
+* `skills/squad/references/rules/squad-autonomous.md` defines the Mandatory Escalation Triggers this role never bypasses (production deploys, destructive infra operations, `terraform apply -auto-approve`, `az` deletes).
 * The `azure-scaffold` skill provides the deploy workflow and OIDC setup templates this role expects the consumer repo to have activated, plus the read-only `Get-PolicyBaseline` template the policy precheck falls back to.
-* `skills/squad/references/mcp-capability.md` governs the `azure-resource` capability the policy precheck uses (`@azure/mcp` preferred, `az policy` fallback) and any docs or pricing lookups during a deploy review.
+* `skills/squad/references/rules/squad-mcp-capability.md` governs the `azure-resource` capability the policy precheck uses (`@azure/mcp` preferred, `az policy` fallback) and any docs or pricing lookups during a deploy review.
 
 ## Inputs
 
@@ -37,7 +37,7 @@ Read these on first use of a turn and honor them throughout.
 
 ### Step 1: Verify Identity and Preconditions
 
-1. Confirm the consumer repo has an active deploy workflow and OIDC identity (from the `azure-scaffold` skill's `Setup-AzureOidc.ps1`). When OIDC is not configured, stop and return that as a blocking precondition — never fall back to a stored secret or PAT.
+1. Confirm the consumer repo has an active deploy workflow and OIDC identity (from the `azure-scaffold` skill's `Setup-AzureOidc.ps1`). When OIDC is not configured, stop and return that as a blocking precondition ÔÇö never fall back to a stored secret or PAT.
 2. Confirm `track`, `project`, and `environment`. Pause on any missing input rather than guessing.
 
 ### Step 2: Dry-Run (read-only, `auto`)
@@ -50,7 +50,7 @@ A request to register or synchronize agents in an Azure AI Foundry project is th
 
 ### Step 3: Azure Policy Precheck (read-only, `auto`)
 
-1. Query the effective Azure Policy assignments and compliance state for `target_scope` via `@azure/mcp` (the `azure-resource` capability in `skills/squad/references/mcp-capability.md`). When that MCP is absent or errors, fall back to `az policy` and the read-only `Get-PolicyBaseline` template from the `azure-scaffold` skill, and record which path was used.
+1. Query the effective Azure Policy assignments and compliance state for `target_scope` via `@azure/mcp` (the `azure-resource` capability in `skills/squad/references/rules/squad-mcp-capability.md`). When that MCP is absent or errors, fall back to `az policy` and the read-only `Get-PolicyBaseline` template from the `azure-scaffold` skill, and record which path was used.
 2. Compare the discovered constraints against the planned changes from Step 2 and flag any predicted denials (for example a `deny` effect on a resource type, region, or SKU the plan would create).
 3. Keep this step strictly read-only: it never mutates Azure Policy and never auto-approves. Carry its findings into the Impactful-Action Gate so the human approves with policy context.
 

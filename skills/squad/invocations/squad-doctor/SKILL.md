@@ -13,15 +13,14 @@ metadata:
 Per `hve-squad`'s own architecture decision (the plugin deliberately does not
 vendor hve-core's domain content), the `hve-squad` plugin does **not** vendor
 hve-core's domain content. When a consumer installs only this plugin (no
-`apm install github/hve-core`), the `hve-core` Copilot plugin they may also
-have installed ships **zero** files from seven domains: **accessibility,
-security, privacy, RAI, project-planning, design-thinking, and
-coding-standards**. Most of `squad-roster.instructions.md`'s cast catalog
-casts against agents in exactly those seven domains — so most roster rows
-resolve to an absent agent at dispatch time, and the roster's own rule is to
-**escalate rather than dispatch a partial squad**. This check makes that gap
-visible before a turn hits it, instead of failing mid-dispatch with an
-unexplained "agent not found."
+`apm install github/hve-core`, and no `hve-squad-hve-core` marketplace entry),
+the domain agents from seven areas are missing: **accessibility, security,
+privacy, RAI, project-planning, design-thinking, and coding-standards**. Most
+of the roster's cast catalog casts against agents in exactly those seven
+domains — so most roster rows resolve to an absent agent at dispatch time, and
+the roster's own rule is to **escalate rather than dispatch a partial squad**.
+This check makes that gap visible before a turn hits it, instead of failing
+mid-dispatch with an unexplained "agent not found."
 
 This check never vendors or duplicates hve-core's content (that would repeat
 the rejected alternative) — it only reports what is present versus what the
@@ -47,8 +46,8 @@ None required. Optionally accepts **scope** (`all` default, or a single domain n
    | `coding-standards` | `Code Review Functional`, `Code Review Standards`, `Code Review Security`, `Code Review Accessibility` |
 
 3. **Report per-domain, not just an aggregate.** For each domain: `present` (name the resolved agent) or `absent`. Never report a domain `present` on the strength of the squad's own `squad-*` glue agents (`Squad Reviewer`, `Squad Lead`, etc.) — those dispatch *to* the domain's agents and are not a substitute for them being present.
-4. **Name the fix for every absent domain**, without vendoring the content itself: `apm install github/microsoft/hve-core` (full package) resolves all seven at once; a narrower ask is out of this check's scope — see the README's *Known Gap* section for the standing recommendation.
-5. **Cross-check the mapping's currency.** This table mirrors `squad-src/.github/instructions/squad/squad-roster.instructions.md`'s cast catalog as of this plugin's build. If the roster changes which Primary a role resolves to, this table drifts — note that possibility in the report rather than presenting the table as infallible.
+4. **Name the fix for every absent domain**, without vendoring the content itself: installing the `hve-squad-hve-core` marketplace entry (pinned to the commit this hve-squad release was validated against), or `apm install github/microsoft/hve-core` for an apm consumer, resolves all seven at once.
+5. **Cross-check the mapping's currency.** This table mirrors `skills/squad/references/rules/squad-roster.md`'s cast catalog as of this plugin's build. If the roster changes which Primary a role resolves to, this table drifts — note that possibility in the report rather than presenting the table as infallible.
 
 ## Output
 

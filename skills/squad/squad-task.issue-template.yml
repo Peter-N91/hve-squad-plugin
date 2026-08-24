@@ -15,8 +15,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        This issue is labeled `squad/auto`, so — once the `COPILOT_GITHUB_TOKEN` secret is set
-        and branch protection is on — the **Squad Watch** workflow runs the squad in autopilot and
+        This issue is labeled `squad/auto`, so ÔÇö once the `COPILOT_GITHUB_TOKEN` secret is set
+        and branch protection is on ÔÇö the **Squad Watch** workflow runs the squad in autopilot and
         opens a **draft pull request** that closes this issue. It stops at any impactful action for
         human approval.
   - type: textarea

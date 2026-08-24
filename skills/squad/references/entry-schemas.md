@@ -25,7 +25,7 @@ description: "Append-only log of squad decisions and their rationale"
 
 # Squad Decisions
 
-Entries are appended below in chronological order. Each entry records the decision, its rationale, the turn it was made on, and a reference to an ADR when the decision is architecturally significant. Council Verdicts use the `## Council Verdict <timestamp> <topic-id>` heading and the schema in `.github/instructions/squad/squad-council.instructions.md`; Discovery Verdicts and Intake Readiness Verdicts use their own headings and schemas from `.github/instructions/squad/squad-discovery-gate.instructions.md` and `.github/instructions/squad/squad-intake-gate.instructions.md`. Prior entries are never edited or removed.
+Entries are appended below in chronological order. Each entry records the decision, its rationale, the turn it was made on, and a reference to an ADR when the decision is architecturally significant. Council Verdicts use the `## Council Verdict <timestamp> <topic-id>` heading and the schema in `skills/squad/references/rules/squad-council.md`; Discovery Verdicts and Intake Readiness Verdicts use their own headings and schemas from `skills/squad/references/rules/squad-discovery-gate.md` and `skills/squad/references/rules/squad-intake-gate.md`. Prior entries are never edited or removed.
 
 <!-- Append new decision entries below this line. -->
 
@@ -98,13 +98,13 @@ Intake Readiness Verdict placeholder (Scribe stamps this shape when the intake g
 
 ## history/<agent>.md
 
-One append-only file per dispatched agent. Replace `<agent>` with the agent's `name:` frontmatter value **verbatim** — the display name, spaces and capitalization intact, as in `history/Squad Researcher.md` or `history/BRD Builder.md`. Never slugify it, never lowercase it, and never substitute the role id: the file name is how a later turn matches a history entry back to the roster row it came from, so `squad-researcher.md` and `researcher.md` both read as a missing entry and the ledger rewrite drops that agent. Autonomous-loop runs add per-cycle dispatch entries to each role's history file using the placeholder shape below.
+One append-only file per dispatched agent. Replace `<agent>` with the agent's `name:` frontmatter value **verbatim** ÔÇö the display name, spaces and capitalization intact, as in `history/Squad Researcher.md` or `history/BRD Builder.md`. Never slugify it, never lowercase it, and never substitute the role id: the file name is how a later turn matches a history entry back to the roster row it came from, so `squad-researcher.md` and `researcher.md` both read as a missing entry and the ledger rewrite drops that agent. Autonomous-loop runs add per-cycle dispatch entries to each role's history file using the placeholder shape below.
 
-**The file is created by the first dispatch to that agent, never before it.** Init seeds the `history/` directory and nothing inside it. A header-only file seeded for every roster member at Init destroys the one signal this directory exists to carry — a file's presence is the proof a stage ran — and turns "which roles have been dispatched" into a question the state can no longer answer. Create the file with its header at the moment the first entry is appended, in the same write.
+**The file is created by the first dispatch to that agent, never before it.** Init seeds the `history/` directory and nothing inside it. A header-only file seeded for every roster member at Init destroys the one signal this directory exists to carry ÔÇö a file's presence is the proof a stage ran ÔÇö and turns "which roles have been dispatched" into a question the state can no longer answer. Create the file with its header at the moment the first entry is appended, in the same write.
 
-`history/Squad Scribe.md` follows the same naming rule but holds `#### Consumption — Orchestration` blocks rather than dispatch records, because the coordinator's own turns and the Scribe's writes need somewhere in `history/` for the ledger rewrite to read them back from. It is not a dispatched stage and is not counted as one.
+`history/Squad Scribe.md` follows the same naming rule but holds `#### Consumption ÔÇö Orchestration` blocks rather than dispatch records, because the coordinator's own turns and the Scribe's writes need somewhere in `history/` for the ledger rewrite to read them back from. It is not a dispatched stage and is not counted as one.
 
-An orchestration entry uses the dispatch entry shape below with the `#### Consumption — Orchestration` heading in place of `#### Consumption`, and `Deliverable:` naming the state files that turn wrote:
+An orchestration entry uses the dispatch entry shape below with the `#### Consumption ÔÇö Orchestration` heading in place of `#### Consumption`, and `Deliverable:` naming the state files that turn wrote:
 
 ````markdown
 ### <timestamp> <what this turn wrote>
@@ -114,14 +114,14 @@ An orchestration entry uses the dispatch entry shape below with the `#### Consum
 * Deliverable: <the state files this turn wrote>
 * Outcome: <one line>
 
-#### Consumption — Orchestration
+#### Consumption ÔÇö Orchestration
 
 ```json
 { ... the same ten fields, in the same order ... }
 ```
 ````
 
-Write every one of those four prose fields. The turn number and the work the turn covered have no field in the block — the set is closed at ten — so an entry that omits the prose leaves them nowhere to go and they leak into the JSON as `turn` and `task`, which breaks the field-order contract and drops the block out of the ledger rewrite.
+Write every one of those four prose fields. The turn number and the work the turn covered have no field in the block ÔÇö the set is closed at ten ÔÇö so an entry that omits the prose leaves them nowhere to go and they leak into the JSON as `turn` and `task`, which breaks the field-order contract and drops the block out of the ledger rewrite.
 
 ```markdown
 ---
@@ -137,7 +137,7 @@ Each entry records a request this agent handled, the findings or outcome it retu
 
 **The heading is literally `# History: <agent>`.** Not the bare agent name, not a role-flavored rewrite of the description. A later turn locates a history file by that heading, and a file headed `# Squad Researcher` reads as a file with no header at all.
 
-Every appended dispatch entry uses exactly this shape. The `#### Consumption` heading is the container the ledger rewrite reads blocks back from, so its level and wording are fixed and it takes **no suffix**: `### Consumption`, `#### Consumption Block`, `#### Consumption — Research`, and `#### Consumption — Orchestration (Turn 1)` are all unreadable and drop that dispatch out of every later aggregate. The only legal variant is `#### Consumption — Orchestration`, which marks an orchestration block rather than a dispatch. Turn and timestamp belong in the entry heading above the block or inside the JSON, never appended to the heading.
+Every appended dispatch entry uses exactly this shape. The `#### Consumption` heading is the container the ledger rewrite reads blocks back from, so its level and wording are fixed and it takes **no suffix**: `### Consumption`, `#### Consumption Block`, `#### Consumption ÔÇö Research`, and `#### Consumption ÔÇö Orchestration (Turn 1)` are all unreadable and drop that dispatch out of every later aggregate. The only legal variant is `#### Consumption ÔÇö Orchestration`, which marks an orchestration block rather than a dispatch. Turn and timestamp belong in the entry heading above the block or inside the JSON, never appended to the heading.
 
 ````markdown
 ### <timestamp> <short title>
@@ -236,7 +236,7 @@ description: "Autopilot-run summary for topic <id>"
 | final     | coordinator | n/a                          | notified <recipient-or-in-chat> | Final-Outcome Validation   |
 ```
 
-`Dispatch Record` names the history file the Scribe wrote for that stage, and is filled from `history/` rather than from the coordinator's account of the run. A stage with no such file carries the literal `— none recorded`, and any such cell forces the `incomplete` outcome above. This is the run's own report that its cast was not dispatched, written by the only participant that knows.
+`Dispatch Record` names the history file the Scribe wrote for that stage, and is filled from `history/` rather than from the coordinator's account of the run. A stage with no such file carries the literal `ÔÇö none recorded`, and any such cell forces the `incomplete` outcome above. This is the run's own report that its cast was not dispatched, written by the only participant that knows.
 
 In a deliverable fan-out run, the single `implement` row expands into one row per deliverable (`implement: <deliverable>` with its owning agent).
 
@@ -258,9 +258,9 @@ Each entry records a notification the squad fired: when, to whom, the trigger, t
 
 ## state.json
 
-Machine-readable squad status. Uses replace semantics — the coordinator overwrites it (through the Squad Scribe) as the squad advances.
+Machine-readable squad status. Uses replace semantics ÔÇö the coordinator overwrites it (through the Squad Scribe) as the squad advances.
 
-**The key set below is closed.** Write these keys and no others, at both levels: every one of `schemaVersion`, `updated`, `turn`, `mode`, `activeRoles`, `openEscalations`, `currentRun`, and `notify` is present on every write, and `currentRun` always carries `sessionModel`, `modelOverrides`, `estCostUsd`, and `estCreditsTotal`. This file is read by machine — the cost ceiling, the resume path, and the notification channel all look for exact keys — so a run that invents `status`, `completedDispatches`, or a `timestamp` beside `updated` produces a file that looks informative and answers none of the questions the squad asks it. `currentRun` is a running total, not a scratchpad: per-turn figures live in the turn's consumption block, never as a `turn9_review_consumption` object parked here, and never as a word like `"moderate"` where a number belongs.
+**The key set below is closed.** Write these keys and no others, at both levels: every one of `schemaVersion`, `updated`, `turn`, `mode`, `activeRoles`, `openEscalations`, `currentRun`, and `notify` is present on every write, and `currentRun` always carries `sessionModel`, `modelOverrides`, `estCostUsd`, and `estCreditsTotal`. This file is read by machine ÔÇö the cost ceiling, the resume path, and the notification channel all look for exact keys ÔÇö so a run that invents `status`, `completedDispatches`, or a `timestamp` beside `updated` produces a file that looks informative and answers none of the questions the squad asks it. `currentRun` is a running total, not a scratchpad: per-turn figures live in the turn's consumption block, never as a `turn9_review_consumption` object parked here, and never as a word like `"moderate"` where a number belongs.
 
 ```json
 {
@@ -288,4 +288,4 @@ Machine-readable squad status. Uses replace semantics — the coordinator overwr
 }
 ```
 
-Watch Mode runs additionally carry an optional, additive `trigger` object recording the event that started the run; interactive, autonomous, and autopilot runs omit it. See `.github/instructions/squad/squad-watch-mode.instructions.md`.
+Watch Mode runs additionally carry an optional, additive `trigger` object recording the event that started the run; interactive, autonomous, and autopilot runs omit it. See `skills/squad/references/rules/squad-watch-mode.md`.

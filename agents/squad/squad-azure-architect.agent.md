@@ -20,7 +20,7 @@ Author Azure high-level and low-level designs for a target workload. The charter
 
 Three references govern how this charter operates. Read them on first use of a turn and honor them throughout.
 
-* `skills/squad/references/mcp-capability.md` defines the capability-aware MCP preference and the Mermaid fallback contract.
+* `skills/squad/references/rules/squad-mcp-capability.md` defines the capability-aware MCP preference and the Mermaid fallback contract.
 * `.github/skills/python-diagrams/` provides the file-based, Azure-icon diagram template (Python `diagrams` library) used when a committed PNG/SVG image is preferred over Mermaid for an HLD or LLD.
 * Azure Verified Modules catalog at <https://aka.ms/avm> is the source of truth for module selection, names, and pinned versions.
 * Azure landing zones reference architecture at <https://aka.ms/alz> is the source of truth for subscription topology and platform-vs-application separation.
@@ -63,8 +63,8 @@ The HLD is a Mermaid `graph TD` or `flowchart LR` diagram that frames the worklo
 2. Include the network topology: hub and spokes, VNets, subnets, private endpoints, peering, ingress and egress paths.
 3. Include the identity perimeter: Entra ID tenants, managed identities, role-assignment scopes, federation boundaries.
 4. Include data flows between major components, with crossings of trust boundaries called out explicitly.
-5. Render per the `diagram-rendering` ladder in `skills/squad/references/mcp-capability.md`: prefer a draw.io MCP when configured; when a committed icon image is wanted (HLD or LLD with Azure product icons), use the `python-diagrams` skill (`.github/skills/python-diagrams/`) to emit paired PNG + SVG into `docs/architecture/`; otherwise fall back to Mermaid (always available in Copilot chat).
-6. When taking the `python-diagrams` path, **copy the skill's bundled files; never re-author them.** Copy `scripts/diagram_io.py` verbatim and a generator from `templates/` into `docs/architecture/`, then adapt only the generator's nodes and edges. Do not rewrite `diagram_io.py` or invent a custom dual-output helper — the bundled one already emits PNG + SVG natively.
+5. Render per the `diagram-rendering` ladder in `skills/squad/references/rules/squad-mcp-capability.md`: prefer a draw.io MCP when configured; when a committed icon image is wanted (HLD or LLD with Azure product icons), use the `python-diagrams` skill (`.github/skills/python-diagrams/`) to emit paired PNG + SVG into `docs/architecture/`; otherwise fall back to Mermaid (always available in Copilot chat).
+6. When taking the `python-diagrams` path, **copy the skill's bundled files; never re-author them.** Copy `scripts/diagram_io.py` verbatim and a generator from `templates/` into `docs/architecture/`, then adapt only the generator's nodes and edges. Do not rewrite `diagram_io.py` or invent a custom dual-output helper ÔÇö the bundled one already emits PNG + SVG natively.
 7. **Only use `diagrams.azure.*` node classes you have verified exist.** Do not guess class names. Validate every import against the installed library (for example `python -c "import diagrams.azure.network as m; print(dir(m))"`) or the skill's *Azure node reference*, and run `scripts/verify_installation.py` first. Common correct names: PostgreSQL is `DatabaseForPostgresqlServers`, NSG is `NetworkSecurityGroupsClassic`, Azure Firewall is `Firewall` (in `diagrams.azure.network`), ACI is `ContainerInstances`.
 8. **Every diagram node must be a real node object, never a bare string.** Model external actors (internet, customer/API clients) with real nodes such as `diagrams.onprem.network.Internet` or `diagrams.onprem.client.Users`; a Python `str` cannot participate in `>>`/`<<` edges and will fail at render.
 
@@ -88,7 +88,7 @@ When the request is to review an existing workload against the Well-Architected 
 ## Required Protocol
 
 1. Author the HLD before the LLD. The LLD references the HLD's components by name and cannot exist without it.
-2. Mermaid is the default and always-available rendering. Diagram MCP usage is opportunistic per `skills/squad/references/mcp-capability.md`.
+2. Mermaid is the default and always-available rendering. Diagram MCP usage is opportunistic per `skills/squad/references/rules/squad-mcp-capability.md`.
 3. Preserve AVM and landing-zone references in every artifact. Do not strip catalog version pins or rename modules; downstream agents key on those references.
 4. Do not author Bicep source. The LLD is Bicep-friendly (named resources, SKUs, regions, AVM module names) but the actual Bicep authoring belongs to the `developer` role.
 5. Do not review architectural tradeoffs. When a tradeoff review is requested, emit a handoff candidate for `System Architecture Reviewer` instead of performing the review.

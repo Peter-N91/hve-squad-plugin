@@ -54,8 +54,8 @@ Run the skill's validation pass and resolve its findings. Confirm every internal
 
 Return to the coordinator:
 
-* **Mode** — the documentation-skill mode used.
-* **Paths Written** — every file created or updated.
-* **Grounding** — the squad artifacts the content was drawn from.
-* **Open Questions** — facts the artifacts did not answer, or `none`.
-* **Validation** — the validation pass result.
+* **Mode** ÔÇö the documentation-skill mode used.
+* **Paths Written** ÔÇö every file created or updated.
+* **Grounding** ÔÇö the squad artifacts the content was drawn from.
+* **Open Questions** ÔÇö facts the artifacts did not answer, or `none`.
+* **Validation** ÔÇö the validation pass result.

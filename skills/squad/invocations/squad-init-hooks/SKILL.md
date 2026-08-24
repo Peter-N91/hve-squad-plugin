@@ -10,9 +10,9 @@ metadata:
 
 ## Why This Exists
 
-Per the GitHub Copilot hooks reference, a plugin's own `hooks.json` is loaded by **Copilot CLI only**. **Copilot cloud agent loads hook configuration exclusively from `.github/hooks/*.json` files committed in the cloned repository** — it never reads a plugin's `hooks.json`. So this plugin's guards (the Impactful-Action Gate, the append-only/single-writer backstop, the dispatch-time gates, the autonomous escalation check) run for a CLI or desktop-app session, but not for a Watch Mode run or any other cloud-agent job, unless a copy is committed at the repository level. This is exactly the "one command, not an `apm install`" gap the source discussion doc names.
+Per the GitHub Copilot hooks reference, a plugin's own `hooks.json` is loaded by **Copilot CLI only**. **Copilot cloud agent loads hook configuration exclusively from `.github/hooks/*.json` files committed in the cloned repository** — it never reads a plugin's `hooks.json`. So this plugin's guards (the Impactful-Action Gate, the append-only/single-writer backstop, the dispatch-time gates, the autonomous escalation check) run for a CLI or desktop-app session, but not for a Watch Mode run or any other cloud-agent job, unless a copy is committed at the repository level.
 
-This is a **single-purpose action**: it drops hook files into the consuming repository. It does nothing else — no roster seeding, no profile selection, no `team.md`/`routing.md` creation. Profile and roster selection remain a separate runtime concern (ADR-0004), unaffected by this skill.
+This is a **single-purpose action**: it drops hook files into the consuming repository. It does nothing else — no roster seeding, no profile selection, no `team.md`/`routing.md` creation.
 
 ## Inputs
 
@@ -29,7 +29,7 @@ This is a **single-purpose action**: it drops hook files into the consuming repo
 
 ## Idempotency
 
-* A `<!-- generated-by: squad-init-hooks -->` marker (or the JSON equivalent, a top-level `"_generatedBy": "squad-init-hooks"` field) is written into `hve-squad.json` so a re-run can recognize its own prior output.
+* A top-level `"_generatedBy": "squad-init-hooks"` field is written into `hve-squad.json` so a re-run can recognize its own prior output.
 * Re-running without `force` when the marker is present and unchanged is a no-op that reports "already up to date."
 * Re-running when the target file exists **without** the marker (a human-authored `.github/hooks/hve-squad.json`, or a differently-named file that happens to collide) refuses to overwrite it and reports the conflict, asking the user to rename one side — the same no-clobber discipline the federation naming rule uses elsewhere in the squad.
 

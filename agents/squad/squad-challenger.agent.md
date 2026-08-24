@@ -24,13 +24,13 @@ This charter exists because HVE Core moved adversarial review into the `rpi-chal
 
 * The `rpi-challenger` skill governs assumption and reasoning critique; the `rpi-plan-critique` skill governs plan-versus-research verification. Read the matching skill before challenging.
 * This charter is **read-only with respect to the artifact under challenge**. It records objections; it does not fix them.
-* `skills/squad/references/scribe-procedure.md` defines proof-of-dispatch: this charter's work counts only when a critique record exists on disk and the Scribe has written the matching history entry.
-* `skills/squad/references/gates-and-modes.md` defines the pre-implementation council. When this charter runs as a council member, its objections feed the most-restrictive-wins synthesis rather than standing alone.
+* `skills/squad/references/rules/squad-state.md` defines proof-of-dispatch: this charter's work counts only when a critique record exists on disk and the Scribe has written the matching history entry.
+* `skills/squad/references/rules/squad-council.md` defines the pre-implementation council. When this charter runs as a council member, its objections feed the most-restrictive-wins synthesis rather than standing alone.
 * An objection that survives review is a successful challenge. Never soften or drop an objection to make a run look clean.
 
 ## Inputs
 
-* The artifact under challenge — a plan, a proposal, an architecture, a set of requirements, or a stated assumption.
+* The artifact under challenge ÔÇö a plan, a proposal, an architecture, a set of requirements, or a stated assumption.
 * (Optional) The research artifacts the subject claims to rest on, for plan-versus-research verification.
 * (Optional) The specific concern to pressure-test, when the coordinator scopes the challenge narrowly.
 * (Optional) A squad-root path (`squadRoot`) identifying which squad or sub-squad dispatched this work.
@@ -58,9 +58,9 @@ Attack the reasoning, never the author. An objection must name what would have t
 
 Write the critique record under `.copilot-tracking/reviews/`. Grade each objection:
 
-* **Blocking** — proceeding on this claim risks material rework or a wrong outcome.
-* **Material** — the claim should be resolved or explicitly accepted as a recorded assumption before proceeding.
-* **Minor** — worth noting, not worth stopping for.
+* **Blocking** ÔÇö proceeding on this claim risks material rework or a wrong outcome.
+* **Material** ÔÇö the claim should be resolved or explicitly accepted as a recorded assumption before proceeding.
+* **Minor** ÔÇö worth noting, not worth stopping for.
 
 State for each objection what evidence or decision would close it.
 
@@ -68,8 +68,8 @@ State for each objection what evidence or decision would close it.
 
 Return to the coordinator:
 
-* **Critique Record** — the path written under `.copilot-tracking/reviews/`.
-* **Subject** — what was challenged, and the research it was checked against, or `none supplied`.
-* **Objections** — a table of objection, severity, the claim it targets, and what would close it.
-* **Assumptions Surfaced** — assumptions the artifact relied on without stating, or `none`.
-* **Verdict** — `no-blocking-objections`, `proceed-with-recorded-assumptions`, or `blocking-objections-outstanding`.
+* **Critique Record** ÔÇö the path written under `.copilot-tracking/reviews/`.
+* **Subject** ÔÇö what was challenged, and the research it was checked against, or `none supplied`.
+* **Objections** ÔÇö a table of objection, severity, the claim it targets, and what would close it.
+* **Assumptions Surfaced** ÔÇö assumptions the artifact relied on without stating, or `none`.
+* **Verdict** ÔÇö `no-blocking-objections`, `proceed-with-recorded-assumptions`, or `blocking-objections-outstanding`.

@@ -4,7 +4,7 @@
 #   Closes the OUTBOUND half of Watch Mode (DR-01): turns repository events into
 #   headless squad runs (issue -> draft PR, PR -> review, comment -> routed run,
 #   schedule -> maintenance sweep, push -> validation council). See
-#   `.github/instructions/squad/squad-watch-mode.instructions.md`.
+#   `skills/squad/references/rules/squad-watch-mode.md`.
 #
 # Scope
 #   This file is a REFERENCE TEMPLATE shipped under the squad skill folder. It is
@@ -13,7 +13,7 @@
 #   `.github/workflows/squad-watch.yml` in your consumer repo, wire the runtime
 #   step to your CLI Action (DR-01a), review it, and commit it deliberately.
 #
-# Triggers (the full event-to-intent map — all wired)
+# Triggers (the full event-to-intent map ÔÇö all wired)
 #   | Event                | Opt-in gate                     | What the squad does                          |
 #   |----------------------|---------------------------------|----------------------------------------------|
 #   | issues (labeled)     | `squad/auto` label              | autopilot -> DRAFT PR that closes the issue   |
@@ -30,7 +30,7 @@
 #
 # Event-scoped sub-squads (the audit trail)
 #   Every run executes inside a federation sub-squad dedicated to its event, so what
-#   continuous AI did — and why — is auditable per issue, per PR, per sweep, per push:
+#   continuous AI did ÔÇö and why ÔÇö is auditable per issue, per PR, per sweep, per push:
 #
 #     | Event                      | Sub-squad name              |
 #     |----------------------------|-----------------------------|
@@ -43,21 +43,21 @@
 #
 #   The prompt routes through `/squad-federation ... watch=...`, whose Watch Mode
 #   Bootstrap Mode creates the federation when there is none, AUTO-PROMOTES an
-#   existing single squad into one, or expands an existing federation — then runs the
+#   existing single squad into one, or expands an existing federation ÔÇö then runs the
 #   event's sub-squad scoped to `.copilot-tracking/squad/members/<name>/`. Names are
 #   derived ONLY from structural metadata (numbers, refs, shas, run id, date), never
 #   from issue/PR/comment text, because a name becomes a filesystem path segment.
-#   See `.github/instructions/squad/squad-watch-mode.instructions.md`.
+#   See `skills/squad/references/rules/squad-watch-mode.md`.
 #
 # What it intentionally does NOT do
-#   It never merges, pushes to protected branches, or deploys — those remain
+#   It never merges, pushes to protected branches, or deploys ÔÇö those remain
 #   human-approved Impactful-Action Gates carried by the `github-issue` approval
 #   channel and the shipped approval-watcher (`github-approval-watcher.workflow.yml`).
 #   It never uses `pull_request_target`, and it skips fork pull requests, so a fork
 #   cannot obtain a privileged run (DR-01d: in-repo events only).
 #
 # Runtime (DR-01a: GitHub Copilot CLI)
-#   The squad has no runtime of its own — every verb is a convention over
+#   The squad has no runtime of its own ÔÇö every verb is a convention over
 #   `runSubagent`/`task` inside an agent session. This template runs the squad
 #   headlessly with the GitHub Copilot CLI (`npm install -g @github/copilot`, then
 #   `copilot -p "<prompt>"`). Copilot CLI natively loads the squad's deployed
@@ -74,7 +74,7 @@
 #   Built-in GITHUB_TOKEN scoped to contents:write, pull-requests:write, and
 #   issues:write (to open the draft PR and to comment when escalating). Copilot CLI
 #   authentication additionally needs a fine-grained PAT with the "Copilot
-#   Requests" permission, supplied as the secret COPILOT_GITHUB_TOKEN — the
+#   Requests" permission, supplied as the secret COPILOT_GITHUB_TOKEN ÔÇö the
 #   built-in GITHUB_TOKEN does not carry Copilot access. Branch protections and any
 #   GitHub Environment approvals on your side still gate every downstream action.
 #
@@ -100,7 +100,7 @@ on:
   issue_comment:
     types: [created]
   schedule:
-    - cron: '0 6 * * 1'          # Mondays 06:00 UTC — adjust or remove
+    - cron: '0 6 * * 1'          # Mondays 06:00 UTC ÔÇö adjust or remove
   workflow_dispatch:
     inputs:
       request:
@@ -127,15 +127,15 @@ env:
   #
   # A headless Copilot CLI run does NOT read the `model:` frontmatter that the
   # VS Code host honors, so without this flag model selection falls to `auto` and
-  # routes the coordinator — the most instruction-heavy agent in the system, holding
+  # routes the coordinator ÔÇö the most instruction-heavy agent in the system, holding
   # the dispatch contract, the roster, the routing table, and the two-level
-  # verification checklist — to whatever is cheapest. A coordinator that cannot hold
+  # verification checklist ÔÇö to whatever is cheapest. A coordinator that cannot hold
   # the contract fills the gap by authoring deliverables inline instead of
   # dispatching its cast, which is the exact failure this pin exists to prevent.
   # Pin a frontier model here; do not pin a fast tier.
   #
   # Precedence in the CLI is: --model flag > COPILOT_MODEL env > ~/.copilot/settings.json.
-  # Only the flag is repo-scoped, because only the flag lives in this file — the
+  # Only the flag is repo-scoped, because only the flag lives in this file ÔÇö the
   # settings file is per-user and per-machine, so it cannot express "in this project".
   #
   # The CLI takes exactly one model ID and fails if it is not enabled on the plan

@@ -27,14 +27,14 @@
 //   4. Pick the command form that matches your install (see the two options
 //      in the entry) and delete the other.
 //   5. Reload VS Code so Copilot picks up the new server, then ask Copilot to
-//      "research X with the squad" — the squad_* tools become model-invocable.
+//      "research X with the squad" ÔÇö the squad_* tools become model-invocable.
 //
 // Version pinning
 //   Option A pins an EXACT published version (`@hve-squad/mcp@<version>`),
 //   never a bare `@hve-squad/mcp` (which npx would resolve to whatever is
 //   currently `@latest`, breaking reproducibility across installs run on
 //   different days). Bumping this pin is a deliberate, separate action from
-//   rebuilding the squad's agent content — the plugin generator
+//   rebuilding the squad's agent content ÔÇö the plugin generator
 //   (`Build-SquadPlugin.ps1`'s `-McpVersion`) follows the same rule: it never
 //   silently re-pins to a newer MCP release on an unrelated content rebuild.
 //
@@ -42,7 +42,7 @@
 //   DELEGATED. Each tool returns a short paraphrase of the Coordinator's
 //   Dispatch Discipline plus the matched routing row and a framed dispatch
 //   request; VS Code's own agent host runs the runSubagent/task loop against
-//   the REAL, already-installed `.agent.md` personas — the server holds no
+//   the REAL, already-installed `.agent.md` personas ÔÇö the server holds no
 //   bundled cast in this mode and calls no model. The cloud surfaces (Copilot
 //   Studio, M365, Cowork) use a separate, remote Streamable HTTP + Entra path
 //   (embedded execution), not this stdio wiring.
@@ -57,7 +57,7 @@
       "type": "stdio",
 
       // Option A (published package, pinned): run via npx, pinned to an
-      // exact tested version — never bare `@hve-squad/mcp`, which npx would
+      // exact tested version ÔÇö never bare `@hve-squad/mcp`, which npx would
       // resolve to whatever `@latest` happens to be at install time.
       "command": "npx",
       "args": [

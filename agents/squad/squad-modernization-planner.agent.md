@@ -26,7 +26,7 @@ This charter does not implement source changes (that is the `developer` role) an
 
 Two references govern how this charter operates. Read them on first use of a turn and honor them throughout.
 
-* `skills/squad/references/mcp-capability.md` defines the capability-aware MCP preference and the named fallback when no MCP is present. When no modernization or code-analysis MCP is present in the consumer's `.vscode/mcp.json`, default to the Squad Researcher delegation pattern.
+* `skills/squad/references/rules/squad-mcp-capability.md` defines the capability-aware MCP preference and the named fallback when no MCP is present. When no modernization or code-analysis MCP is present in the consumer's `.vscode/mcp.json`, default to the Squad Researcher delegation pattern.
 * The official GitHub Copilot App Modernization tooling (the VS Code and IntelliJ extension, and the Modernization agent CLI) is the recommended execution engine for batch assessment and upgrade. This charter coordinates that tooling and recommends when to use it; it never embeds or re-implements it.
 
 Never embed version-specific upgrade rules, end-of-life schedules, or dependency rate cards inline; resolve current guidance at runtime through the Squad Researcher so the plan stays accurate.
@@ -45,7 +45,7 @@ Never embed version-specific upgrade rules, end-of-life schedules, or dependency
 
 Read the request and decide which mode applies (framework upgrade, dependency upgrade, deprecated-API remediation, containerization, or migration readiness). Record the chosen mode in the response so the Coordinator can route follow-on work correctly.
 
-When the request crosses stacks — a different language or runtime, or a different frontend framework (for example, Node.js to .NET, or React to Angular) — classify it as the `re-platform` mode and apply the Re-Platform (Cross-Stack Rewrite) Mode section below. The same-stack modes above keep their behavior unchanged.
+When the request crosses stacks ÔÇö a different language or runtime, or a different frontend framework (for example, Node.js to .NET, or React to Angular) ÔÇö classify it as the `re-platform` mode and apply the Re-Platform (Cross-Stack Rewrite) Mode section below. The same-stack modes above keep their behavior unchanged.
 
 ### Step 2: Assess Current State via Squad Researcher
 
@@ -61,11 +61,11 @@ Write a phased plan with per-phase risk and effort. Recommend the execution path
 
 ## Re-Platform (Cross-Stack Rewrite) Mode
 
-This mode applies only when the request crosses stacks rather than upgrading within one: a different language or runtime (for example, a Node.js backend rebuilt on .NET), or a different frontend framework (for example, a React app rebuilt in Angular). It is a rewrite, not an upgrade — there is no version path between the source and the target — so it follows the rules below in addition to the Required Steps. These rules apply only to the `re-platform` mode and do not change how the same-stack modes behave.
+This mode applies only when the request crosses stacks rather than upgrading within one: a different language or runtime (for example, a Node.js backend rebuilt on .NET), or a different frontend framework (for example, a React app rebuilt in Angular). It is a rewrite, not an upgrade ÔÇö there is no version path between the source and the target ÔÇö so it follows the rules below in addition to the Required Steps. These rules apply only to the `re-platform` mode and do not change how the same-stack modes behave.
 
 * Execution routes to the squad `developer` role together with the `architect` role, never to the official App Modernization tooling. That tooling upgrades within a stack and cannot perform a cross-stack rewrite, so do not recommend it for this mode.
 * Before sequencing any rewrite phase, capture a behavior contract for the source system through the Squad Researcher: its external API surface, inputs and outputs, side effects, and the tests that pin current behavior. The behavior of the existing system is the specification for the rewritten one.
-* Sequence the rewrite incrementally — for example, a strangler-fig migration that ports one capability at a time behind a stable interface — rather than a single big-bang cutover, unless the codebase is small enough that a full rewrite is demonstrably lower risk.
+* Sequence the rewrite incrementally ÔÇö for example, a strangler-fig migration that ports one capability at a time behind a stable interface ÔÇö rather than a single big-bang cutover, unless the codebase is small enough that a full rewrite is demonstrably lower risk.
 * Treat every re-platform as a large, high-risk effort. Always mark it for council review (`architect`, `security`, `cost-manager`, `product-owner`) before any implementation phase begins, even when a same-stack phase of comparable size would not require it.
 * Record `re-platform` as the `modernization_mode` and set `execution_recommendation` to `developer` plus `architect`, with a one-line rationale that names the source and target stacks.
 

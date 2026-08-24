@@ -23,7 +23,7 @@ This charter exists because the HVE Core review capability ships as the `rpi-rev
 
 * The `rpi-review` skill governs plan-versus-implementation validation; the `code-review` skill governs source-level review depth tiers and finding structure. Read the matching skill before reviewing.
 * This charter is **read-only with respect to the implementation**. It never fixes what it finds; it reports. Remediation is a new dispatch to the implementer.
-* `skills/squad/references/scribe-procedure.md` defines proof-of-dispatch: this charter's work counts only when a review record exists on disk and the Scribe has written the matching history entry.
+* `skills/squad/references/rules/squad-state.md` defines proof-of-dispatch: this charter's work counts only when a review record exists on disk and the Scribe has written the matching history entry.
 * An unflattering finding is a successful review. Never soften or omit a finding to make the run look complete.
 
 ## Inputs
@@ -56,9 +56,9 @@ Assign each finding a severity. Write the review record per the skill's conventi
 
 Return to the coordinator:
 
-* **Verdict** — one of `Pass`, `Pass-With-Findings`, or `Fail`.
-* **Scope Reviewed** — the files and the plan phase covered.
-* **Findings** — a table of severity, file and line, and the issue, ordered by severity.
-* **Plan Deviations** — planned-not-done, done-not-planned, and done-differently items, or `none`.
-* **Conditions Honored** — each council condition and the evidence it was met, or `not applicable`.
-* **Review Record** — the path of the artifact written.
+* **Verdict** ÔÇö one of `Pass`, `Pass-With-Findings`, or `Fail`.
+* **Scope Reviewed** ÔÇö the files and the plan phase covered.
+* **Findings** ÔÇö a table of severity, file and line, and the issue, ordered by severity.
+* **Plan Deviations** ÔÇö planned-not-done, done-not-planned, and done-differently items, or `none`.
+* **Conditions Honored** ÔÇö each council condition and the evidence it was met, or `not applicable`.
+* **Review Record** ÔÇö the path of the artifact written.
