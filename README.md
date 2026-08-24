@@ -12,7 +12,7 @@ Full documentation lives on the project site:
 
 | Page                                                                                    | What it covers                                                    |
 |------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| [Install: Copilot CLI](https://peter-n91.github.io/hve-squad-plugin/install-cli.html)     | `copilot plugin install`, verification, namespace resolution        |
+| [Install: Copilot CLI](https://peter-n91.github.io/hve-squad-plugin/install-cli.html)     | Registering the marketplace, installing both plugins, and updating them as a pair |
 | [Install: Desktop app](https://peter-n91.github.io/hve-squad-plugin/install-desktop.html) | The GitHub Copilot desktop app / VS Code Plugins settings path       |
 | [Install: VS Code notes](https://peter-n91.github.io/hve-squad-plugin/install-vscode.html) | VS Code specifics and the non-plugin, MCP-only alternative           |
 | [Architecture](https://peter-n91.github.io/hve-squad-plugin/architecture.html)            | Plugin vs. MCP server invocation surfaces, and the version-pinning gap |

@@ -7,7 +7,6 @@
     "description": "Marketplace for the hve-squad GitHub Copilot plugin, generated and release-gated from Peter-N91/hve-squad.",
     "version": "0.16.1"
   },
-  "autoUpdate": true,
   "plugins": [
     {
       "name": "hve-squad",
@@ -24,11 +23,11 @@
     {
       "name": "hve-squad-hve-core",
       "description": "microsoft/hve-core pinned to the exact commit validated against hve-squad 0.16.1's apm.yml (Sync and Adapt / cast-delta guard). Named distinctly from the official hve-core plugin so both can be registered side by side.",
-      "version": "3.2.2",
+      "version": "0.16.1",
       "source": {
         "source": "github",
         "repo": "microsoft/hve-core",
-        "sha": "3050cf5e609d50ec171cb4d657f0f4bc988e8982"
+        "sha": "b1cae5059b6efedb406eef070d2981c201a5baed"
       },
       "repository": "https://github.com/microsoft/hve-core",
       "license": "MIT"

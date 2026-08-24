@@ -44,7 +44,9 @@
         plugin the same way the standalone Copilot desktop app does, resolving the same
         <code>.github/plugin/plugin.json</code> manifest. See
         <a href="install-desktop.html">Install: Desktop app</a> for the walkthrough — it applies
-        to VS Code without modification.
+        to VS Code without modification, including the requirement to install
+        <strong>both</strong> <code>hve-squad</code> and <code>hve-squad-hve-core</code> and to
+        update them together.
       </p>
 
       <h2>Alternative: MCP-only, no plugin install</h2>
@@ -60,10 +62,17 @@
     "hve-squad": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@hve-squad/mcp"]
+      "args": ["-y", "@hve-squad/mcp@0.7.1"]
     }
   }
 }</code></pre>
+      <p>
+        Pin an exact version rather than a bare <code>@hve-squad/mcp</code>: unpinned,
+        <code>npx</code> resolves whatever is <code>latest</code> at the moment you run it, so two
+        machines set up on different days get different servers. Each published
+        <code>@hve-squad/mcp</code> release is built against a specific hve-squad version, which is
+        the same pairing discipline the two marketplace entries follow.
+      </p>
       <p>
         Merge that entry into <code>.vscode/mcp.json</code> (do not replace servers you already
         depend on), reload VS Code, and the squad's tools

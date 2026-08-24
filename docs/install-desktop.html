@@ -50,13 +50,33 @@
         plugins and offers a search/install action for new ones.
       </p>
 
-      <h2>2. Search for and install the plugin</h2>
+      <h2>2. Search for and install both plugins</h2>
       <p>
         Search for <code>Peter-N91/hve-squad-plugin</code> (or paste the repository URL if the
-        panel accepts one) and choose <strong>Install</strong>. The client fetches
+        panel accepts one). This marketplace publishes <strong>two</strong> entries, and you need
+        both:
+      </p>
+      <ul>
+        <li><code>hve-squad</code> — the squad's own agents, skills, hooks, and MCP server entry</li>
+        <li><code>hve-squad-hve-core</code> — the <code>microsoft/hve-core</code> agents and skills the squad's roles dispatch to, pinned to the exact commit the matching hve-squad release was validated against</li>
+      </ul>
+      <p>
+        Choose <strong>Install</strong> on each. The client fetches
         <code>.github/plugin/plugin.json</code> from this repository the same way the CLI does,
         and registers the same agents, skills, hooks, and MCP server entry.
       </p>
+
+      <div class="callout">
+        <p>
+          <strong>Install hve-core from here, not from its own source.</strong> Most squad roles
+          resolve to an hve-core agent, so <code>hve-squad</code> alone leaves those roles
+          unresolvable. Installing hve-core directly from <code>microsoft/hve-core</code> instead
+          gives you whatever is current there, which can be ahead of the routing tables and role
+          charters your installed squad version references. The
+          <code>hve-squad-hve-core</code> entry carries the validated commit pin, which is the
+          whole point of publishing it here.
+        </p>
+      </div>
 
       <div class="screenshot-placeholder">
         <!-- SCREENSHOT PLACEHOLDER: the Copilot Plugins settings panel with hve-squad-plugin found/installed -->
@@ -79,6 +99,21 @@
         <div class="ph-label">Screenshot placeholder</div>
         <div class="ph-desc">A successful hve-squad agent invocation shown in the Copilot chat view</div>
       </div>
+
+      <h2>Updating later</h2>
+      <p>
+        This marketplace does not set <code>autoUpdate</code>, so updates are explicit. When a new
+        release lands, update <strong>both</strong> entries in the same sitting — each hve-squad
+        release pins the hve-core commit it was validated against, so moving one forward without
+        the other reintroduces exactly the version skew the pin exists to prevent.
+      </p>
+      <p>
+        In the Plugins panel, refresh the marketplace listing, then choose the update action on
+        <code>hve-squad</code> and on <code>hve-squad-hve-core</code>. If the panel offers no
+        explicit refresh, the <a href="install-cli.html">CLI steps</a> do the same thing and are
+        the reliable fallback. Reinstalling both entries is idempotent and always safe if you are
+        unsure what state you are in.
+      </p>
 
       <div class="callout">
         <p>

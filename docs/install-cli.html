@@ -43,23 +43,48 @@
         <li>Read access to <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a> (public repository — no extra access grant needed)</li>
       </ul>
 
-      <h2>1. Install the plugin</h2>
-      <p>From any directory, run:</p>
-      <pre><code>copilot plugin install Peter-N91/hve-squad-plugin</code></pre>
+      <div class="callout">
+        <p>
+          <strong>Install both plugins, always as a pair.</strong> This marketplace publishes two
+          entries: <code>hve-squad</code> (the squad's own agents and skills) and
+          <code>hve-squad-hve-core</code> (the <code>microsoft/hve-core</code> agents and skills
+          the squad dispatches to). Most squad roles resolve to an hve-core agent, so installing
+          <code>hve-squad</code> alone leaves those roles unresolvable.
+        </p>
+        <p>
+          Install <code>hve-squad-hve-core</code> from <em>this</em> marketplace rather than from
+          <code>microsoft/hve-core</code> directly. This marketplace's entry is pinned to the exact
+          commit SHA that the matching hve-squad release was built and validated against — the same
+          pin recorded in that release's <code>apm.yml</code> and checked by its cast-delta guard.
+          Installing hve-core from its own source instead gives you whatever is current there, which
+          can be ahead of the routing tables and role charters your installed squad version
+          references.
+        </p>
+      </div>
+
+      <h2>1. Register the marketplace</h2>
+      <pre><code>copilot plugin marketplace add Peter-N91/hve-squad-plugin</code></pre>
+
+      <h2>2. Install both plugins</h2>
+      <pre><code>copilot plugin install hve-squad@Peter-N91
+copilot plugin install hve-squad-hve-core@Peter-N91</code></pre>
       <p>
-        The CLI reads this repository's <code>.github/plugin/plugin.json</code> manifest and
-        registers everything it points at: the 27 agents under <code>agents/squad/</code>, the
-        squad skill and its invocation skills under <code>skills/squad/</code>, the
-        <code>hooks.json</code> enforcement scripts, and the <code>.mcp.json</code> server
-        registration for <code>@hve-squad/mcp</code>.
+        Installing <code>hve-squad</code> reads this repository's
+        <code>.github/plugin/plugin.json</code> manifest and registers everything it points at: the
+        27 agents under <code>agents/squad/</code>, the squad skill and its invocation skills under
+        <code>skills/squad/</code>, the <code>hooks.json</code> enforcement scripts, and the
+        <code>.mcp.json</code> server registration for <code>@hve-squad/mcp</code>.
+        <code>hve-squad-hve-core</code> then supplies the hve-core agents and skills those squad
+        roles dispatch to, at the pinned commit.
       </p>
 
-      <h2>2. Verify the install</h2>
+      <h2>3. Verify the install</h2>
       <pre><code>copilot plugin list</code></pre>
       <p>
-        Confirm <code>hve-squad</code> appears in the output with a status indicating it is
-        active. If it does not appear, re-run step 1 and check the CLI's own error output — a
-        failed manifest fetch is the most common cause and usually resolves on retry.
+        Confirm <strong>both</strong> <code>hve-squad</code> and <code>hve-squad-hve-core</code>
+        appear with a status indicating they are active. If only one appears, re-run the missing
+        install from step 2 — a squad with no hve-core installed will escalate rather than dispatch
+        when a role's agent cannot be found.
       </p>
 
       <div class="screenshot-placeholder">
@@ -69,7 +94,7 @@
         <div class="ph-desc">copilot plugin list output showing hve-squad registered</div>
       </div>
 
-      <h2>3. Namespace resolution</h2>
+      <h2>4. Namespace resolution</h2>
       <p>
         Once installed, every agent this plugin ships is addressable under the
         <code>hve-squad:squad-*</code> namespace — the plugin name (<code>hve-squad</code>, from
@@ -85,24 +110,68 @@ hve-squad:squad-coordinator
         what disambiguates them — always safe to use explicitly.
       </p>
 
+      <h2>Updating later</h2>
+      <p>
+        This marketplace deliberately does <strong>not</strong> set <code>autoUpdate</code>. The
+        two entries are a matched pair: an unattended update that moved <code>hve-squad</code>
+        forward while leaving <code>hve-squad-hve-core</code> behind (or the reverse) would
+        reintroduce exactly the version skew the pinned entry exists to prevent. Updates are
+        therefore explicit, and both entries move together.
+      </p>
+      <p>To take a new release:</p>
+      <pre><code># 1. Refresh the marketplace so the CLI sees the new entries and their pins
+copilot plugin marketplace update Peter-N91/hve-squad-plugin
+
+# 2. Update BOTH plugins, in the same sitting
+copilot plugin install hve-squad@Peter-N91
+copilot plugin install hve-squad-hve-core@Peter-N91
+
+# 3. Confirm both moved
+copilot plugin list</code></pre>
+      <div class="callout">
+        <p>
+          <strong>Never update one without the other.</strong> Each hve-squad release pins the
+          hve-core commit it was validated against. When a release bumps that pin, the
+          <code>hve-squad-hve-core</code> entry's SHA changes with it — so updating
+          <code>hve-squad</code> alone leaves you running new squad content against the older
+          hve-core it was not built for. If you are ever unsure what state you are in, reinstall
+          both entries; installs are idempotent.
+        </p>
+        <p>
+          Do not run <code>copilot plugin install</code> against
+          <code>microsoft/hve-core</code> directly, and do not add hve-core's own marketplace
+          alongside this one for the same purpose. Both bypass the pin and resolve whatever is
+          current upstream. The <code>hve-squad-hve-core</code> entry is named distinctly so that
+          it can coexist with an official hve-core plugin if you have one installed for unrelated
+          reasons.
+        </p>
+      </div>
+
       <h2>Install flow</h2>
       <div class="mermaid">
 sequenceDiagram
     participant U as User
     participant CLI as Copilot CLI
-    participant Repo as hve-squad-plugin (this repo)
+    participant MP as Marketplace (this repo)
+    participant Repo as hve-squad-plugin
+    participant Core as microsoft/hve-core
     participant Reg as Local plugin registry
 
-    U->>CLI: copilot plugin install Peter-N91/hve-squad-plugin
-    CLI->>Repo: fetch .github/plugin/plugin.json
-    Repo-->>CLI: manifest (agents, skills, hooks, mcpServers paths)
-    CLI->>Repo: fetch agents/squad/*, skills/squad/*, hooks.json, .mcp.json
-    CLI->>Reg: register 27 agents + squad skill (7 invocations) + hooks + MCP server
-    Reg-->>CLI: namespace "hve-squad" active
-    U->>CLI: copilot plugin list
-    CLI-->>U: hve-squad — active
+    U->>CLI: copilot plugin marketplace add Peter-N91/hve-squad-plugin
+    CLI->>MP: fetch .github/plugin/marketplace.json
+    MP-->>CLI: 2 entries — hve-squad (ref main), hve-squad-hve-core (pinned sha)
+
+    U->>CLI: copilot plugin install hve-squad@Peter-N91
+    CLI->>Repo: fetch plugin.json, then agents/, skills/, hooks.json, .mcp.json
+    CLI->>Reg: register 27 agents + squad skill + hooks + MCP server
+
+    U->>CLI: copilot plugin install hve-squad-hve-core@Peter-N91
+    CLI->>Core: fetch content at the pinned commit SHA
+    CLI->>Reg: register hve-core agents + skills
+
+    Reg-->>CLI: namespaces active, squad roles resolvable
     U->>CLI: hve-squad:squad-coordinator ...
-    CLI-->>U: dispatches Squad Coordinator agent
+    CLI-->>U: dispatches Squad Coordinator, which can now reach hve-core roles
       </div>
 
       <div class="pager">
