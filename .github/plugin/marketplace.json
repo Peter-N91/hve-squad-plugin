@@ -22,13 +22,13 @@
       "license": "MIT"
     },
     {
-      "name": "hve-core",
-      "description": "microsoft/hve-core pinned to the exact commit validated against hve-squad 0.16.1's apm.yml (Sync and Adapt / cast-delta guard). Experimental: hve-core does not publish its own plugin.json, so this entry's installability is unverified — added to test whether the marketplace can install a non-self-describing source repo.",
+      "name": "hve-squad-hve-core",
+      "description": "microsoft/hve-core pinned to the exact commit validated against hve-squad 0.16.1's apm.yml (Sync and Adapt / cast-delta guard). Named distinctly from the official hve-core plugin so both can be registered side by side.",
       "version": "3.2.2",
       "source": {
         "source": "github",
         "repo": "microsoft/hve-core",
-        "ref": "3050cf5e609d50ec171cb4d657f0f4bc988e8982"
+        "sha": "3050cf5e609d50ec171cb4d657f0f4bc988e8982"
       },
       "repository": "https://github.com/microsoft/hve-core",
       "license": "MIT"
