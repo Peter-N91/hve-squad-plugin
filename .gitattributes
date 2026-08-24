@@ -1,2 +1,6 @@
 agents/** linguist-generated=true
 skills/** linguist-generated=true
+
+# Hook scripts run under bash on Linux/WSL and the cloud agent; a CRLF checkout
+# on Windows makes them fail with a bad-interpreter error.
+*.sh text eol=lf
