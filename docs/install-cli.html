@@ -66,8 +66,15 @@
       <pre><code>copilot plugin marketplace add Peter-N91/hve-squad-plugin</code></pre>
 
       <h2>2. Install both plugins</h2>
-      <pre><code>copilot plugin install hve-squad@Peter-N91
-copilot plugin install hve-squad-hve-core@Peter-N91</code></pre>
+      <pre><code>copilot plugin install hve-squad@hve-squad-plugin
+copilot plugin install hve-squad-hve-core@hve-squad-plugin</code></pre>
+      <p>
+        The suffix after <code>@</code> is the <strong>marketplace name</strong>
+        (<code>hve-squad-plugin</code>, the <code>name</code> field in
+        <code>marketplace.json</code>) — not the repository owner. Installed plugins land under
+        <code>installed-plugins/hve-squad-plugin/&lt;plugin&gt;/</code>, which mirrors the same
+        <code>marketplace/plugin</code> shape.
+      </p>
       <p>
         Installing <code>hve-squad</code> reads this repository's
         <code>.github/plugin/plugin.json</code> manifest and registers everything it points at: the
@@ -123,8 +130,8 @@ hve-squad:squad-coordinator
 copilot plugin marketplace update Peter-N91/hve-squad-plugin
 
 # 2. Update BOTH plugins, in the same sitting
-copilot plugin install hve-squad@Peter-N91
-copilot plugin install hve-squad-hve-core@Peter-N91
+copilot plugin install hve-squad@hve-squad-plugin
+copilot plugin install hve-squad-hve-core@hve-squad-plugin
 
 # 3. Confirm both moved
 copilot plugin list</code></pre>
@@ -161,11 +168,11 @@ sequenceDiagram
     CLI->>MP: fetch .github/plugin/marketplace.json
     MP-->>CLI: 2 entries — hve-squad (ref main), hve-squad-hve-core (pinned sha)
 
-    U->>CLI: copilot plugin install hve-squad@Peter-N91
+    U->>CLI: copilot plugin install hve-squad@hve-squad-plugin
     CLI->>Repo: fetch plugin.json, then agents/, skills/, hooks.json, .mcp.json
     CLI->>Reg: register 27 agents + squad skill + hooks + MCP server
 
-    U->>CLI: copilot plugin install hve-squad-hve-core@Peter-N91
+    U->>CLI: copilot plugin install hve-squad-hve-core@hve-squad-plugin
     CLI->>Core: fetch content at the pinned commit SHA
     CLI->>Reg: register hve-core agents + skills
 
