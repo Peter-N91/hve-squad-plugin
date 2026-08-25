@@ -129,28 +129,93 @@ hve-squad:squad-coordinator
       <pre><code># 1. Refresh the marketplace so the CLI sees the new entries and their pins
 copilot plugin marketplace update Peter-N91/hve-squad-plugin
 
-# 2. Update BOTH plugins, in the same sitting
-copilot plugin install hve-squad@hve-squad-plugin
+# 2. Update hve-squad in place
+copilot plugin update hve-squad@hve-squad-plugin
+
+# 3. Replace hve-squad-hve-core — uninstall THEN install, never update
+copilot plugin uninstall hve-squad-hve-core@hve-squad-plugin
 copilot plugin install hve-squad-hve-core@hve-squad-plugin
 
-# 3. Confirm both moved
+# 4. Confirm both moved
 copilot plugin list</code></pre>
+
+      <div class="callout warn">
+        <p>
+          <strong><code>copilot plugin update</code> does not work for
+          <code>hve-squad-hve-core</code>. Uninstall it, then install it.</strong> This is not a
+          preference — the update path cannot detect a new pin for this entry, and will leave you
+          on the old hve-core while reporting success.
+        </p>
+        <p>
+          The reason is that <code>plugin update</code> compares the version recorded at install
+          time against the version it resolves now, and for this entry both of those come from
+          <strong>upstream hve-core's own <code>plugin.json</code></strong> (for example
+          <code>3.2.2</code>) — not from the <code>version</code> field of this marketplace's
+          entry. When an hve-squad release bumps only <code>source.sha</code> and upstream
+          hve-core's own version has not changed, the two numbers still match, so the CLI answers
+          <code>already at latest</code> and keeps the previously fetched tree. The pin moved; the
+          files on disk did not.
+        </p>
+        <p>
+          Uninstalling first clears that recorded state, so the follow-up install resolves
+          <code>source.sha</code> fresh and fetches the tree the current release was validated
+          against. Do this every time you take a release, even when
+          <code>copilot plugin update hve-squad-hve-core@hve-squad-plugin</code> claims there is
+          nothing to do.
+        </p>
+      </div>
+
       <div class="callout">
         <p>
           <strong>Never update one without the other.</strong> Each hve-squad release pins the
           hve-core commit it was validated against. When a release bumps that pin, the
           <code>hve-squad-hve-core</code> entry's SHA changes with it — so updating
           <code>hve-squad</code> alone leaves you running new squad content against the older
-          hve-core it was not built for. If you are ever unsure what state you are in, reinstall
-          both entries; installs are idempotent.
+          hve-core it was not built for. If you are ever unsure what state you are in, uninstall
+          and reinstall both entries.
         </p>
         <p>
-          Do not run <code>copilot plugin install</code> against
-          <code>microsoft/hve-core</code> directly, and do not add hve-core's own marketplace
-          alongside this one for the same purpose. Both bypass the pin and resolve whatever is
-          current upstream. The <code>hve-squad-hve-core</code> entry is named distinctly so that
-          it can coexist with an official hve-core plugin if you have one installed for unrelated
-          reasons.
+          One plugin home per client. The CLI stores plugins under
+          <code>$COPILOT_HOME</code>, and clients that embed the Copilot CLI (desktop apps, IDE
+          integrations) commonly point that at their own directory rather than
+          <code>~/.copilot</code>. Updating in a terminal therefore does <em>not</em> update the
+          copy an embedding client uses. Run the uninstall/install pair once per plugin home you
+          actually dispatch the squad from.
+        </p>
+      </div>
+
+      <h2 id="do-not-install-official-hve-core">Do not also install the official hve-core plugin</h2>
+      <div class="callout warn">
+        <p>
+          <strong>If you run the squad, install hve-core only through this marketplace's
+          <code>hve-squad-hve-core</code> entry.</strong> Do not additionally install the official
+          <code>hve-core</code> plugin from <code>microsoft/hve-core</code>, and do not register
+          hve-core's own marketplace alongside this one.
+        </p>
+        <p>
+          The two entries ship the same agent, skill, and instruction files under different plugin
+          names, and the official one tracks whatever is current upstream instead of the validated
+          commit. With both installed you get two registered copies of every hve-core artifact,
+          usually at two different commits. Squad roles resolve to hve-core agents by name, so a
+          dispatch can land on the unpinned copy — and the routing tables, role charters, and
+          cast-delta guarantees your installed hve-squad release was built against no longer hold.
+          Symptoms are ambiguous: duplicated or shadowed agents in
+          <code>copilot plugin list</code>, roles that resolve to an agent whose charter does not
+          match the routing table, or dispatches that behave differently between two machines on
+          the same hve-squad version.
+        </p>
+        <p>
+          The <code>hve-squad-hve-core</code> entry is named distinctly so the two <em>can</em>
+          be registered side by side without a name collision at install time. That is a
+          packaging safeguard so a pre-existing install does not block this one — it is not a
+          recommendation to run both. If you already have the official plugin installed, remove it
+          before dispatching the squad:
+        </p>
+        <pre><code>copilot plugin list
+copilot plugin uninstall hve-core@&lt;its-marketplace&gt;</code></pre>
+        <p>
+          If you need the official plugin for unrelated work, keep it in a separate plugin home
+          (a different <code>$COPILOT_HOME</code>) rather than alongside the squad.
         </p>
       </div>
 

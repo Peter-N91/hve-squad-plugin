@@ -109,11 +109,35 @@
       </p>
       <p>
         In the Plugins panel, refresh the marketplace listing, then choose the update action on
-        <code>hve-squad</code> and on <code>hve-squad-hve-core</code>. If the panel offers no
-        explicit refresh, the <a href="install-cli.html">CLI steps</a> do the same thing and are
-        the reliable fallback. Reinstalling both entries is idempotent and always safe if you are
-        unsure what state you are in.
+        <code>hve-squad</code>. For <code>hve-squad-hve-core</code>, <strong>remove it and install
+        it again</strong> rather than using the update action.
       </p>
+
+      <div class="callout warn">
+        <p>
+          <strong><code>hve-squad-hve-core</code> must be removed and reinstalled, not
+          updated.</strong> Its recorded version comes from upstream hve-core's own
+          <code>plugin.json</code>, not from this marketplace's entry, so a release that bumps only
+          the pinned commit leaves that number unchanged. Any update action — panel button or
+          <code>copilot plugin update</code> — then reports it as already current and keeps the
+          old files. Removing it clears that state so the reinstall fetches the newly pinned
+          commit. See
+          <a href="install-cli.html#do-not-install-official-hve-core">Install: Copilot CLI</a> for
+          the full explanation and the exact commands.
+        </p>
+      </div>
+
+      <div class="callout warn">
+        <p>
+          <strong>Do not also install the official hve-core plugin.</strong> If you run the squad,
+          take hve-core only through this marketplace's <code>hve-squad-hve-core</code> entry.
+          Installing the official <code>hve-core</code> plugin alongside it registers a second copy
+          of every hve-core agent and skill, tracking whatever is current upstream rather than the
+          validated commit. Squad roles resolve to hve-core agents by name, so a dispatch can land
+          on that unpinned copy and silently escape the pin. The distinct entry name exists so the
+          two do not collide at install time, not as an endorsement of running both.
+        </p>
+      </div>
 
       <div class="callout">
         <p>

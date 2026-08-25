@@ -36,8 +36,8 @@ not published alongside this repo's own history.
 
 ## Current source provenance
 
-- Built from `Peter-N91/hve-squad` tag `v0.16.0`
-- Extraction date: 2026-08-23
+- Built from `Peter-N91/hve-squad` tag `v0.16.2`
+- Extraction date: 2026-08-25
 
 ## Structure
 
@@ -51,6 +51,56 @@ not published alongside this repo's own history.
 files under these paths by hand — changes will be silently overwritten the
 next time this repository is regenerated from a `hve-squad` release tag. See
 `CODEOWNERS` for the enforcement convention.
+
+## Installing and updating
+
+Both marketplace entries must be installed, always as a pair:
+
+```bash
+copilot plugin marketplace add Peter-N91/hve-squad-plugin
+copilot plugin install hve-squad@hve-squad-plugin
+copilot plugin install hve-squad-hve-core@hve-squad-plugin
+```
+
+Two rules govern every later update. Both are explained in full on
+[Install: Copilot CLI](https://peter-n91.github.io/hve-squad-plugin/install-cli.html).
+
+### `hve-squad-hve-core` must be uninstalled, then installed — never updated
+
+```bash
+copilot plugin marketplace update Peter-N91/hve-squad-plugin
+copilot plugin update hve-squad@hve-squad-plugin
+
+copilot plugin uninstall hve-squad-hve-core@hve-squad-plugin
+copilot plugin install   hve-squad-hve-core@hve-squad-plugin
+```
+
+`copilot plugin update` compares the version recorded at install time against the
+version it resolves now, and for this entry both come from **upstream hve-core's own
+`plugin.json`** (e.g. `3.2.2`) rather than from this marketplace's `version` field.
+When a release bumps only `source.sha` and upstream hve-core's version is unchanged,
+the two match, the CLI answers `already at latest`, and the previously fetched tree
+stays on disk. The pin moves; the files do not. Uninstalling clears that recorded
+state so the reinstall resolves `source.sha` fresh.
+
+Run the pair once per plugin home you dispatch from. Plugins live under
+`$COPILOT_HOME`, and clients embedding the Copilot CLI often point it somewhere other
+than `~/.copilot`, so updating in a terminal does not update an embedding client's copy.
+
+### Do not also install the official `hve-core` plugin
+
+If you run the squad, take hve-core **only** through this marketplace's
+`hve-squad-hve-core` entry. Installing the official `hve-core` plugin from
+`microsoft/hve-core` alongside it registers a second copy of every hve-core agent and
+skill, tracking whatever is current upstream instead of the validated commit. Squad
+roles resolve to hve-core agents by name, so a dispatch can land on that unpinned copy,
+and the routing tables, role charters, and cast-delta guarantees your installed
+hve-squad release was built against no longer hold.
+
+The `hve-squad-hve-core` entry is named distinctly so both *can* be registered without
+a name collision at install time. That is a packaging safeguard, not a recommendation
+to run both. If the official plugin is already installed, remove it before dispatching
+the squad, or keep it in a separate `$COPILOT_HOME`.
 
 ## Known gap: hve-core plugin does not cover seven domains
 
