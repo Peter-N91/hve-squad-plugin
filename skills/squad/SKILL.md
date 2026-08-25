@@ -27,7 +27,7 @@ This skill packages the coordinator's operating procedure and the seed templates
 
 The coordinator runs four stages each turn: **init**, **route**, **decide**, and **handoff**. Only the coordinator initiates state changes, and only the Squad Scribe performs the writes.
 
-The procedure is split across the reference files below so that each agent loads only what its role needs. Read [references/00-index.md](references/00-index.md) first, then read the files your Skill Reference Contract names ÔÇö not all of them.
+The procedure is split across the reference files below so that each agent loads only what its role needs. Read [references/00-index.md](references/00-index.md) first, then read the files your Skill Reference Contract names — not all of them.
 
 | Reference                                                     | Covers                                                                         |
 |---------------------------------------------------------------|--------------------------------------------------------------------------------|
@@ -36,13 +36,13 @@ The procedure is split across the reference files below so that each agent loads
 | [operating-procedure.md](references/operating-procedure.md)   | Init, Route, ledger reconciliation, Decide, Handoff, tool-to-mechanism mapping |
 | [gates-and-modes.md](references/gates-and-modes.md)           | Discovery, intake, council, implementation gates; autopilot and autonomy modes |
 | [federation.md](references/federation.md)                     | Federation layout, detection precedence, and federation modes                  |
-| [scribe-procedure.md](references/scribe-procedure.md)         | The Squad Scribe write procedure ÔÇö Scribe only                                 |
+| [scribe-procedure.md](references/scribe-procedure.md)         | The Squad Scribe write procedure — Scribe only                                 |
 | [entry-schemas.md](references/entry-schemas.md)               | Recurring write shapes: decision and verdict entries, history, state.json      |
 | [seed-templates.md](references/seed-templates.md)             | First-run state templates: team.md and routing.md                              |
 | [consumption.md](references/consumption.md)                   | Consumption ledger templates and the cost estimator                            |
 | [federation-templates.md](references/federation-templates.md) | Federation-root seed templates                                                 |
 
-Files at the skill root that are not part of this split ÔÇö `learnings/shared-learnings.md`, `squad-watch.workflow.yml`, `github-approval-watcher.workflow.yml`, `mcp.template.json`, `mcp-server.template.json`, and `squad-task.issue-template.yml` ÔÇö keep their existing paths.
+Files at the skill root that are not part of this split — `learnings/shared-learnings.md`, `squad-watch.workflow.yml`, `github-approval-watcher.workflow.yml`, `mcp.template.json`, `mcp-server.template.json`, `squad-task.issue-template.yml`, and `invocations/` (the 5 prompt-derived invocation skills) — keep their existing paths.
 
 ## Attribution
 

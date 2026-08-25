@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Marketplace for the hve-squad GitHub Copilot plugin, generated and release-gated from Peter-N91/hve-squad.",
-    "version": "0.16.1"
+    "version": "0.16.2"
   },
   "plugins": [
     {
       "name": "hve-squad",
       "description": "Plugin distribution tree for hve-squad: 27 Squad Copilot agents and the squad skill (including 5 invocation skills under skills/squad/invocations/), generated and release-gated from Peter-N91/hve-squad.",
-      "version": "0.16.1",
+      "version": "0.16.2",
       "source": {
         "source": "github",
         "repo": "Peter-N91/hve-squad-plugin",
@@ -22,12 +22,12 @@
     },
     {
       "name": "hve-squad-hve-core",
-      "description": "microsoft/hve-core pinned to the exact commit validated against hve-squad 0.16.1's apm.yml (Sync and Adapt / cast-delta guard). Named distinctly from the official hve-core plugin so both can be registered side by side.",
-      "version": "0.16.1",
+      "description": "microsoft/hve-core pinned to the exact commit validated against hve-squad 0.16.2's apm.yml (Sync and Adapt / cast-delta guard). Named distinctly from the official hve-core plugin so both can be registered side by side.",
+      "version": "0.16.2",
       "source": {
         "source": "github",
         "repo": "microsoft/hve-core",
-        "sha": "b1cae5059b6efedb406eef070d2981c201a5baed"
+        "sha": "7cc6dc42caf7f842e1f7aa9f3d41cb4581538f33"
       },
       "repository": "https://github.com/microsoft/hve-core",
       "license": "MIT"

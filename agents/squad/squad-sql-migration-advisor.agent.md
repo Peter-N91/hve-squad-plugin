@@ -38,9 +38,9 @@ The bundled `sql-migration-advisor` skill is a compatibility fallback for recomm
 
 Classify the requested outcome:
 
-* Target, method, assessment path, or migration recommendation ÔåÆ `recommend-migration-path`.
-* Prerequisites, readiness, evidence checklist, or preparation for a known path ÔåÆ `generate-migration-prerequisite-plan`.
-* Both ÔåÆ complete the recommendation first. Continue into prerequisite planning only when the user explicitly asked for both or confirms the provisional path.
+* Target, method, assessment path, or migration recommendation → `recommend-migration-path`.
+* Prerequisites, readiness, evidence checklist, or preparation for a known path → `generate-migration-prerequisite-plan`.
+* Both → complete the recommendation first. Continue into prerequisite planning only when the user explicitly asked for both or confirms the provisional path.
 
 Also record whether the user requested machine-readable JSON. In JSON mode, the selected skill owns the entire successful response; the charter adds no wrapper or trailing metadata that would corrupt its output contract.
 
@@ -55,8 +55,8 @@ Load the selected skill by its exact name.
 When the selected plugin skill is not discovered, diagnose before prescribing:
 
 1. Read `copilot plugins list` and `copilot skill list` when those read-only commands are available. Otherwise ask the user to run them; do not infer installation state.
-2. Plugin absent ÔåÆ `blocked-plugin-missing`; provide the two installation commands and restart requirement.
-3. Plugin present but exact skill absent or disabled ÔåÆ `blocked-plugin-skill-unavailable`; ask the user to restart, then inspect or enable/update the installed plugin. Do not reinstall by default.
+2. Plugin absent → `blocked-plugin-missing`; provide the two installation commands and restart requirement.
+3. Plugin present but exact skill absent or disabled → `blocked-plugin-skill-unavailable`; ask the user to restart, then inspect or enable/update the installed plugin. Do not reinstall by default.
 4. For a human-readable recommendation request, run the bundled `sql-migration-advisor` compatibility skill after recording the diagnosis. Return `legacy-fallback` and the appropriate remediation without claiming plugin-version behavior.
 5. For a JSON recommendation request, do not run the legacy fallback because it has no machine-readable output contract. Return the diagnosed blocked status as one JSON error object.
 6. For a prerequisite request, return the diagnosed blocked status. Do not answer from memory, from the legacy recommendation skill, or from a freshly fetched document.

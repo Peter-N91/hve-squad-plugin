@@ -3,13 +3,13 @@
 
 # Brand Template for PowerPoint Builds
 
-Apply these rules whenever the PowerPoint Builder or PowerPoint Subagent creates or rebuilds a slide deck in this project. They make every generated deck inherit the organization's branding instead of the plain default look. This instruction ships with the squad and is active automatically ÔÇö no one needs to copy or edit it.
+Apply these rules whenever the PowerPoint Builder or PowerPoint Subagent creates or rebuilds a slide deck in this project. They make every generated deck inherit the organization's branding instead of the plain default look. This instruction ships with the squad and is active automatically — no one needs to copy or edit it.
 
 ## The pipeline is the only supported path
 
-Every deck in this project is produced by the `powerpoint` skill: content YAML under `content/`, built with `build_deck.py` (or `Invoke-PptxPipeline.ps1`), then put through the skill's Validate pass. That pipeline is what makes a deck look designed rather than generated ÔÇö the layout rules, the theme inheritance, and the vision-based Validate loop all live there.
+Every deck in this project is produced by the `powerpoint` skill: content YAML under `content/`, built with `build_deck.py` (or `Invoke-PptxPipeline.ps1`), then put through the skill's Validate pass. That pipeline is what makes a deck look designed rather than generated — the layout rules, the theme inheritance, and the vision-based Validate loop all live there.
 
-**Never author a substitute deck builder.** Writing a one-off script against `pptxgenjs`, `python-pptx`, or any other library ÔÇö and `npm install`ing a package to do it ÔÇö is out of bounds, even when it looks faster and even when the skill's pipeline is failing. A hand-rolled builder silently drops the brand template, the theme colors, the layout conventions, and the Validate pass, and the result is the flat deck this instruction exists to prevent.
+**Never author a substitute deck builder.** Writing a one-off script against `pptxgenjs`, `python-pptx`, or any other library — and `npm install`ing a package to do it — is out of bounds, even when it looks faster and even when the skill's pipeline is failing. A hand-rolled builder silently drops the brand template, the theme colors, the layout conventions, and the Validate pass, and the result is the flat deck this instruction exists to prevent.
 
 **When the pipeline cannot run, stop and say so.** The skill needs `uv`, Python 3.11+, PowerShell 7+, and LibreOffice for the export and validation steps. When a prerequisite is missing:
 
@@ -32,7 +32,7 @@ Treat that path as the single source of branding.
 ## When the template exists
 
 * **Full rebuild / new deck**: pass the brand template to `build_deck.py` as `--template` (PowerShell `-TemplatePath`). This inherits the template's slide masters, layouts, and theme (colors and fonts) while discarding the template's own example slides. Only the slides defined under `content/` are added.
-* **Partial rebuild** (updating specific slides in an existing deck): use `--source` pointing at the existing deck plus `--slides`. Do **not** pass `--template` for partial rebuilds ÔÇö it would discard every slide not listed in `--slides`.
+* **Partial rebuild** (updating specific slides in an existing deck): use `--source` pointing at the existing deck plus `--slides`. Do **not** pass `--template` for partial rebuilds — it would discard every slide not listed in `--slides`.
 * **Never combine** `--template` and `--source` in the same command.
 
 ## When the template is missing
@@ -40,7 +40,7 @@ Treat that path as the single source of branding.
 Do not silently produce a plain, unbranded deck. Many users are non-technical and will not know to add a template. Instead:
 
 1. Tell the user, in plain language, that no branded template was found and that adding one makes every deck look on-brand.
-2. Offer to use a template they provide. If they share a `.pptx` (a path, an attached file, or a file already in the workspace), copy it to `.github/brand/pptx-brand-template.pptx` for them ÔÇö create the `.github/brand/` folder if needed ÔÇö and then build with it. The user never has to navigate folders or edit files.
+2. Offer to use a template they provide. If they share a `.pptx` (a path, an attached file, or a file already in the workspace), copy it to `.github/brand/pptx-brand-template.pptx` for them — create the `.github/brand/` folder if needed — and then build with it. The user never has to navigate folders or edit files.
 3. If the user confirms they have no template, build with the skill defaults this once, and remind them they can drop a branded `.pptx` in at any time and ask the squad to save it.
 
 ## Content rules

@@ -39,7 +39,7 @@ This charter exists because the HVE Core planning capability ships as the `rpi-p
 
 ### Step 1: Load the Skill and the Research
 
-Read the `rpi-plan` skill and every research artifact cited for this run. When the research does not cover something the plan needs, record it as an open question and flag it back ÔÇö do not fill the gap with assumption presented as fact.
+Read the `rpi-plan` skill and every research artifact cited for this run. When the research does not cover something the plan needs, record it as an open question and flag it back — do not fill the gap with assumption presented as fact.
 
 ### Step 2: Author the Plan
 
@@ -49,7 +49,7 @@ Produce the plan per the skill's structure, writing it under `.copilot-tracking/
 
 List every deliverable the request asks for. For each, name the owning role from the dispatching team, the artifact it must produce, and its dependencies on other deliverables. Order the list so dependent deliverables follow the ones they consume, and mark which ones can run in the same parallel batch.
 
-When two or more artifact-owning roles appear in this list ÔÇö roster rows whose `Deliverable Root` names a real path, other than `researcher`, `lead`, and `tester` ÔÇö state that explicitly so the coordinator selects the fan-out shape rather than a single build.
+When two or more artifact-owning roles appear in this list — roster rows whose `Deliverable Root` names a real path, other than `researcher`, `lead`, and `tester` — state that explicitly so the coordinator selects the fan-out shape rather than a single build.
 
 ### Step 4: Surface What the Plan Depends On
 
@@ -59,9 +59,9 @@ State the assumptions the plan rests on, the decisions still open, and anything 
 
 Return to the coordinator:
 
-* **Plan Artifact** ÔÇö the path written under `.copilot-tracking/plans/`.
-* **Phases** ÔÇö the numbered phases with a one-line outcome each.
-* **Deliverables** ÔÇö a table of deliverable, owning role, expected artifact path, and dependencies, in execution order.
-* **Implement Shape** ÔÇö `single-build` or `deliverable-fan-out`, with the reason.
-* **Assumptions and Open Decisions** ÔÇö what the plan rests on, or `none`.
-* **Gaps in Research** ÔÇö anything the research did not answer, or `none`.
+* **Plan Artifact** — the path written under `.copilot-tracking/plans/`.
+* **Phases** — the numbered phases with a one-line outcome each.
+* **Deliverables** — a table of deliverable, owning role, expected artifact path, and dependencies, in execution order.
+* **Implement Shape** — `single-build` or `deliverable-fan-out`, with the reason.
+* **Assumptions and Open Decisions** — what the plan rests on, or `none`.
+* **Gaps in Research** — anything the research did not answer, or `none`.

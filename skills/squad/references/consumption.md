@@ -14,7 +14,7 @@ metadata:
 
 Scribe-aggregated ledger of squad members, the model each consumed, and estimated AI-credit cost; this is the common "members and credits" readme. Uses replace semantics: the Scribe rewrites it each turn, mirrors roster order, and recomputes the run total and the comparison line from `consumption-rates.md`. Every figure is an estimate, because no per-dispatch token telemetry exists (the runtime exposes only the per-user aggregate `ai_credits_used`); token counts are estimated and cost and credits are derived, never billed.
 
-The ledger is split into two narrower tables that both key on `Role` ÔÇö one **Attribution** table (who ran, on what model) and one **Usage & Cost** table (what it cost) ÔÇö instead of one 15-column table, because a table wide enough to need horizontal scrolling defeats the point of a ledger a consumer should be able to read at a glance.
+The ledger is split into two narrower tables that both key on `Role` — one **Attribution** table (who ran, on what model) and one **Usage & Cost** table (what it cost) — instead of one 15-column table, because a table wide enough to need horizontal scrolling defeats the point of a ledger a consumer should be able to read at a glance.
 
 Replace semantics govern the file, not the rows. Every rewrite is derived from the full set of per-dispatch consumption blocks recorded in `history/*.md` for the run, summed per role, so a role dispatched early keeps its row for the rest of the run and a role dispatched repeatedly holds one summed row. A rewrite that reflects only the current turn's dispatches produces a ledger that adds up correctly and is still wrong.
 
@@ -43,16 +43,16 @@ description: "Squad consumption ledger: members, models, estimated tokens, cost,
 ### Derivation
 
 ```text
-<role>         turns 0        0 ├ù 0.00 +      0 ├ù 0.00 +      0 ├ù 0.00 +     0 ├ù 0.00 =        0 / 1e6 = 0.0000
-orchestration  turns 0+0=0    0 ├ù 0.00 +      0 ├ù 0.00 +      0 ├ù 0.00 +     0 ├ù 0.00 =        0 / 1e6 = 0.0000
+<role>         turns 0        0 × 0.00 +      0 × 0.00 +      0 × 0.00 +     0 × 0.00 =        0 / 1e6 = 0.0000
+orchestration  turns 0+0=0    0 × 0.00 +      0 × 0.00 +      0 × 0.00 +     0 × 0.00 =        0 / 1e6 = 0.0000
                                                                                        total = 0.0000
 ```
 
-> Basis: estimated. No per-dispatch token telemetry exists; the runtime exposes only the per-user aggregate `ai_credits_used` via the Copilot usage-metrics REST API. `Model` is resolved per *Model Attribution* in `skills/squad/references/rules/squad-state.md` and is never invented ÔÇö `unknown` where it could not be resolved. `Model Source` is `cli-pinned`, `operator-declared`, `dispatch-reported`, `agent-pinned`, `session-inherited`, or `unresolved`; an `agent-pinned` row legitimately differs from the session model. `Priced As` is the rate row used and differs from `Model` only on a fallback. `Turns` is the estimated internal tool-loop turn count, because a dispatch is many model calls and not one; it accumulates across a role's blocks exactly as the token columns do, so a role dispatched twice at `15` and `4` carries `19`. The two tables share the same `Role` order so a row in one lines up with the same row in the other. Token rates and the dispatch-size estimator come from `consumption-rates.md` (observed <date>). Calibration factor <factor> (<observations> reconciled run(s)). 1 AI credit = $0.01 USD.
+> Basis: estimated. No per-dispatch token telemetry exists; the runtime exposes only the per-user aggregate `ai_credits_used` via the Copilot usage-metrics REST API. `Model` is resolved per *Model Attribution* in `skills/squad/references/rules/squad-state.md` and is never invented — `unknown` where it could not be resolved. `Model Source` is `cli-pinned`, `operator-declared`, `dispatch-reported`, `agent-pinned`, `session-inherited`, or `unresolved`; an `agent-pinned` row legitimately differs from the session model. `Priced As` is the rate row used and differs from `Model` only on a fallback. `Turns` is the estimated internal tool-loop turn count, because a dispatch is many model calls and not one; it accumulates across a role's blocks exactly as the token columns do, so a role dispatched twice at `15` and `4` carries `19`. The two tables share the same `Role` order so a row in one lines up with the same row in the other. Token rates and the dispatch-size estimator come from `consumption-rates.md` (observed <date>). Calibration factor <factor> (<observations> reconciled run(s)). 1 AI credit = $0.01 USD.
 
 ## Cost Comparison (illustrative)
 
-This run consumed an estimated **$<squad-cost> (~<squad-credits> AI credits)** across <n> specialized agents, routing read-heavy roles to lightweight models and reserving high-output reasoning models only where needed. Reproducing the same outcome by manually prompting <baseline-model> across roughly <iterations> iterate-and-test turns, each priced through the same dispatch-size estimator, is estimated at **$<manual-cost> (~<manual-credits> AI credits)** ÔÇö a saving of about **<savings-pct>%**.
+This run consumed an estimated **$<squad-cost> (~<squad-credits> AI credits)** across <n> specialized agents, routing read-heavy roles to lightweight models and reserving high-output reasoning models only where needed. Reproducing the same outcome by manually prompting <baseline-model> across roughly <iterations> iterate-and-test turns, each priced through the same dispatch-size estimator, is estimated at **$<manual-cost> (~<manual-credits> AI credits)** — a saving of about **<savings-pct>%**.
 
 <optional per-phase or per-dispatch breakdown, added below the comparison and never in place of it>
 
@@ -95,7 +95,7 @@ description: "Per-model token rates, dispatch-size estimator, and calibration fa
 
 A tier is a routing preference, not a price. When the actual model is unknown, price the tier at its **most expensive member** rather than a blend: the observed failure mode of this ledger is undercounting, so the fallback is deliberately conservative-high and every row it produces is flagged `basis: tier-default`.
 
-The `Priced as` column below names a model for **pricing only**. Never write it into a consumption block's `model` field ÔÇö that field records what actually ran and is resolved per *Model Attribution* in `skills/squad/references/rules/squad-state.md`, or left as the literal `unknown`. Copying a `Priced as` name into `model` is exactly the fabrication that makes a ledger report spend against a model the operator never chose.
+The `Priced as` column below names a model for **pricing only**. Never write it into a consumption block's `model` field — that field records what actually ran and is resolved per *Model Attribution* in `skills/squad/references/rules/squad-state.md`, or left as the literal `unknown`. Copying a `Priced as` name into `model` is exactly the fabrication that makes a ledger report spend against a model the operator never chose.
 
 | Tier     | Priced as         | Input | Cached | Cache write | Output |
 | -------- | ----------------- | ----- | ------ | ----------- | ------ |
@@ -105,25 +105,25 @@ The `Priced as` column below names a model for **pricing only**. Never write it 
 
 ## Dispatch-size estimator
 
-A dispatch is **not one model call**. A dispatched subagent runs an internal tool loop, and every internal turn resends the accumulated context. Input therefore scales with `internal_turns ├ù average_context`, not with a single prompt-and-reply pair. Pricing a dispatch as one call is what makes a ledger read an order of magnitude below the bill.
+A dispatch is **not one model call**. A dispatched subagent runs an internal tool loop, and every internal turn resends the accumulated context. Input therefore scales with `internal_turns × average_context`, not with a single prompt-and-reply pair. Pricing a dispatch as one call is what makes a ledger read an order of magnitude below the bill.
 
 ```text
 tokens(bytes)      = bytes / 4
 base_context       = agent prompt + auto-applied instructions + loaded skill content
-average_context    = base_context + growth_per_turn ├ù (internal_turns - 1) / 2
-gross_input        = internal_turns ├ù average_context
+average_context    = base_context + growth_per_turn × (internal_turns - 1) / 2
+gross_input        = internal_turns × average_context
 ```
 
 Split `gross_input` across the billed rates. Turn 1 is fully uncached; on turns 2..n the carried-forward prefix is a cached read and only the new tool result is fresh input:
 
 ```text
-cached_tokens      = gross_input ├ù 0.80
-input_tokens       = gross_input ├ù 0.20
-cache_write_tokens = base_context + growth_per_turn ├ù (internal_turns - 1)   (Anthropic models only; 0 otherwise)
-output_tokens      = internal_turns ├ù output_per_turn
+cached_tokens      = gross_input × 0.80
+input_tokens       = gross_input × 0.20
+cache_write_tokens = base_context + growth_per_turn × (internal_turns - 1)   (Anthropic models only; 0 otherwise)
+output_tokens      = internal_turns × output_per_turn
 ```
 
-Estimate `internal_turns` and `base_context` from what the dispatch actually reported. These class rows are **floors, not fallbacks** ÔÇö start here and raise, never start below:
+Estimate `internal_turns` and `base_context` from what the dispatch actually reported. These class rows are **floors, not fallbacks** — start here and raise, never start below:
 
 | Dispatch class            | Internal turns | Base context | Growth/turn | Output/turn |
 | ------------------------- | -------------- | ------------ | ----------- | ----------- |
@@ -137,24 +137,24 @@ Estimate `internal_turns` and `base_context` from what the dispatch actually rep
 
 Observable proxies that raise a floor whenever available: the number of files the agent reported reading and their byte size, the byte size of artifacts it wrote, the count of tool calls it reported, and the length of the findings it returned.
 
-**Validity check.** After estimating, confirm `gross_input / internal_turns >= base_context` for the class. A derived average context below the floor means the dispatch was sized from the summary the coordinator handed over rather than from the dispatch's own context. That summary is a report *about* the dispatch, not the context the dispatch ran on ÔÇö an agent's prompt plus its auto-applied instructions already exceeds most floors before it reads a single file. When the check fails, raise the numbers and recompute rather than recording the smaller figure.
+**Validity check.** After estimating, confirm `gross_input / internal_turns >= base_context` for the class. A derived average context below the floor means the dispatch was sized from the summary the coordinator handed over rather than from the dispatch's own context. That summary is a report *about* the dispatch, not the context the dispatch ran on — an agent's prompt plus its auto-applied instructions already exceeds most floors before it reads a single file. When the check fails, raise the numbers and recompute rather than recording the smaller figure.
 
 ## Orchestration overhead
 
 The coordinator's own turns and each Scribe write consume tokens too, and they are dispatches the ledger would otherwise never see. Record them as a single `orchestration` row per run: one coordinator turn per dispatch round at the coordinator's own model, plus one `Scribe state write` class dispatch per Scribe hand-off.
 
-The row is an aggregate, not the storage. Each turn's orchestration figures are appended as a `#### Consumption ÔÇö Orchestration` block to `history/Squad Scribe.md`, and the row is the sum of every such block recorded for the run. A figure that lives only in the turn's payload cannot be read back, so the row resets to the current turn on the next rewrite and the run under-reports its own overhead by every turn that came before.
+The row is an aggregate, not the storage. Each turn's orchestration figures are appended as a `#### Consumption — Orchestration` block to `history/Squad Scribe.md`, and the row is the sum of every such block recorded for the run. A figure that lives only in the turn's payload cannot be read back, so the row resets to the current turn on the next rewrite and the run under-reports its own overhead by every turn that came before.
 
 ## Cost formula
 
 Cost is derived **once per ledger row**, never in a history block. Sum the role's blocks into the four token columns, then take the rates from the row `priced_as` names in `consumption-rates.md`:
 
 ```text
-raw_cost_usd = ( input_tokens       ├ù input_rate
-               + cached_tokens      ├ù cached_rate
-               + cache_write_tokens ├ù cache_write_rate
-               + output_tokens      ├ù output_rate ) / 1e6
-est_cost_usd = raw_cost_usd ├ù calibration_factor
+raw_cost_usd = ( input_tokens       × input_rate
+               + cached_tokens      × cached_rate
+               + cache_write_tokens × cache_write_rate
+               + output_tokens      × output_rate ) / 1e6
+est_cost_usd = raw_cost_usd × calibration_factor
 est_credits  = est_cost_usd / 0.01
 ```
 
@@ -173,7 +173,7 @@ The factor is the running mean of `observed_credits / estimated_credits` across 
 ## Comparison methodology (token terms)
 
 * `squad_cost = sum over dispatched roles of est_cost_usd`
-* `manual_baseline = expected_iterations ├ù baseline_model_cost_per_turn`, where a manual turn is itself priced through the dispatch-size estimator rather than as a single call
+* `manual_baseline = expected_iterations × baseline_model_cost_per_turn`, where a manual turn is itself priced through the dispatch-size estimator rather than as a single call
 * `savings_pct = 1 - (squad_cost / manual_baseline)`
 
 All values are labeled estimated, and token counts are estimated because no per-dispatch telemetry exists.

@@ -33,7 +33,7 @@ The council adds a fifth role when the request involves AI/ML behavior, model se
 
 Each role resolves to its concrete agent through the roster's *Resolving a Role to an Agent* rules in `skills/squad/references/rules/squad-roster.md`. A council membership change for a specific turn is acceptable (for example, swapping a Primary for an Alternate per a Selection Cue), but the council membership is recorded in the Council Verdict so the verdict is auditable.
 
-When a council role is absent from the active roster (`team.md`), or its mapped agent is not installed or not available at dispatch time, the coordinator escalates rather than dispatching a partial council. A council quorum is the full default membership (`architect`, `security`, `cost-manager`, `product-owner`); the optional `rai` slot is the only conditional role. The coordinator never synthesizes a Council Verdict from its own reasoning to cover a missing role, and never substitutes a non-mapped agent for an absent council member ÔÇö a verdict assembled without the full quorum's dispatched findings is invalid and must not gate implementation.
+When a council role is absent from the active roster (`team.md`), or its mapped agent is not installed or not available at dispatch time, the coordinator escalates rather than dispatching a partial council. A council quorum is the full default membership (`architect`, `security`, `cost-manager`, `product-owner`); the optional `rai` slot is the only conditional role. The coordinator never synthesizes a Council Verdict from its own reasoning to cover a missing role, and never substitutes a non-mapped agent for an absent council member — a verdict assembled without the full quorum's dispatched findings is invalid and must not gate implementation.
 
 ## Parallel Dispatch Contract
 
@@ -103,7 +103,7 @@ The schema is the contract: any Scribe write that omits one of these sections fa
 
 ## Verdict Anchor and Decision Ref
 
-Because `decisions.md` is append-only and grows over time, a new `## Council Verdict` entry lands *inside* the file rather than always at the end, which makes it hard for a human to find the entry a gate is talking about. To remove that friction, every Council Verdict entry is addressable by a stable **Decision Ref** ÔÇö a link straight to the entry's own section ÔÇö that the coordinator surfaces whenever it reports the verdict or opens a gate.
+Because `decisions.md` is append-only and grows over time, a new `## Council Verdict` entry lands *inside* the file rather than always at the end, which makes it hard for a human to find the entry a gate is talking about. To remove that friction, every Council Verdict entry is addressable by a stable **Decision Ref** — a link straight to the entry's own section — that the coordinator surfaces whenever it reports the verdict or opens a gate.
 
 The Decision Ref is the `decisions.md` path plus the GitHub/VS Code Markdown heading anchor of the `## Council Verdict <timestamp> <topic-id>` line. The anchor is derived from that heading the standard way: lower-case the text, drop punctuation other than hyphens, and replace each run of spaces with a single hyphen. So the heading `## Council Verdict 2026-07-07 residual-controls` yields:
 
@@ -111,7 +111,7 @@ The Decision Ref is the `decisions.md` path plus the GitHub/VS Code Markdown hea
 .copilot-tracking/squad/decisions.md#council-verdict-2026-07-07-residual-controls
 ```
 
-Whenever the coordinator reports a verdict to the user ÔÇö in a chat reply, at a Human Gate, or in a final-outcome summary ÔÇö it includes this Decision Ref so the human can open the exact section in one click instead of scanning the middle of the file. The reference is derived deterministically from the entry's heading; it is not a new stored field, so it stays valid for the life of the append-only entry.
+Whenever the coordinator reports a verdict to the user — in a chat reply, at a Human Gate, or in a final-outcome summary — it includes this Decision Ref so the human can open the exact section in one click instead of scanning the middle of the file. The reference is derived deterministically from the entry's heading; it is not a new stored field, so it stays valid for the life of the append-only entry.
 
 ## Single-Writer Rule
 
