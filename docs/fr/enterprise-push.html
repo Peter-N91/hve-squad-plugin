@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Déploiement à l’échelle de l’entreprise — hve-squad-plugin</title>
+  <meta name="description" content="Imposer l’installation de hve-squad-plugin dans toute l’organisation via les paramètres GitHub Copilot gérés par l’entreprise." />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="../assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="install-cli.html">Installation : CLI</a>
+        <a href="install-desktop.html">Installation : application de bureau</a>
+        <a href="install-vscode.html">Installation : VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html" class="active">Déploiement à l’échelle de l’entreprise</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Guide d’administration</div>
+      <h1>Guide opératoire de déploiement à l’échelle de l’entreprise : imposer l’installation de <code>hve-squad</code> dans toute l’organisation</h1>
+      <p class="lead">
+        Pour les administrateurs GitHub Copilot d’entreprise qui souhaitent que chaque développeur de leur entreprise
+        reçoive automatiquement le plugin <code>hve-squad</code>, sans devoir exécuter
+        lui-même <code>copilot plugin install</code>.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <div class="callout">
+        <p>
+          Cette page est une copie du guide opératoire, légèrement remise en forme pour sa lecture sur le site Pages.
+          <strong>La source Markdown fait autorité</strong> pour toute personne qui la consulte
+          directement sur GitHub :
+          <a href="https://github.com/Peter-N91/hve-squad-plugin/blob/main/docs/enterprise-push-runbook.md"><code>docs/enterprise-push-runbook.md</code></a>.
+        </p>
+      </div>
+
+      <h2>Fonctionnement</h2>
+      <p>
+        Un administrateur d’entreprise ajoute une entrée sous <code>enabledPlugins</code> dans le fichier
+        <code>copilot/managed-settings.json</code> de l’entreprise (géré côté serveur, dans un dépôt
+        <code>.github-private</code> — la méthode de déploiement par défaut et recommandée),
+        ou dans un fichier <code>managed-settings.json</code> distribué par MDM ou par fichier, pour une application
+        limitée au client local. <code>enabledPlugins</code> et <code>extraKnownMarketplaces</code> se
+        complètent : le dépôt de ce plugin ne fait pas partie des places de marché intégrées par défaut à Copilot ;
+        les paramètres de l’entreprise doivent donc également l’enregistrer via <code>extraKnownMarketplaces</code>
+        avant de le référencer dans <code>enabledPlugins</code>. Une fois la modification enregistrée par commit et poussée sur la
+        branche par défaut du dépôt de gouvernance, chaque client pris en charge (Copilot CLI, VS Code,
+        JetBrains, l’application GitHub Copilot, l’agent cloud Copilot) récupère la stratégie à la prochaine
+        connexion ou sous environ une heure, et installe automatiquement le plugin pour chaque utilisateur —
+        celui-ci a seulement besoin d’un accès en lecture à
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a>
+        (public, sous licence MIT) ; aucune licence ni autorisation d’accès supplémentaire n’est donc requise.
+      </p>
+
+      <h2>Exemple d’entrée dans <code>managed-settings.json</code></h2>
+      <pre><code>{
+  "extraKnownMarketplaces": {
+    "hve-squad-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "Peter-N91/hve-squad-plugin",
+        "ref": "main"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "hve-squad@hve-squad-plugin": true
+  }
+}</code></pre>
+      <p>
+        La clé de <code>enabledPlugins</code> est <code>PLUGIN-NAME@MARKETPLACE-NAME</code> —
+        <code>hve-squad</code> est le nom du plugin défini dans le fichier
+        <code>.github/plugin/plugin.json</code> de ce dépôt, et <code>hve-squad-plugin</code> est le
+        nom de la place de marché défini dans <code>.github/plugin/marketplace.json</code>, dans son champ
+        <code>name</code> de premier niveau. Les deux doivent correspondre exactement, sans quoi la référence n’aboutit à rien.
+      </p>
+
+      <h2>Notes pour les administrateurs</h2>
+      <ul>
+        <li>
+          Définir <code>{ "overridable": true }</code> sur l’une ou l’autre de ces clés dans les paramètres par défaut de l’entreprise
+          permet à chaque équipe de l’entreprise d’ajouter d’autres places de marché ou plugins à ce
+          socle via <code>copilot/team-mappings.json</code> et des fichiers propres à chaque équipe dans
+          <code>copilot/teams/</code> — consultez le guide GitHub
+          <a href="https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-agents/configure-enterprise-managed-settings">Configuration des paramètres gérés par l’entreprise</a>
+          pour connaître la syntaxe de remplacement des valeurs.
+        </li>
+        <li>
+          Un plugin ou une place de marché épinglé de cette manière ne peut pas être désactivé ni redirigé vers une autre source
+          localement par un utilisateur — la valeur gérée prévaut toujours pour cette entrée, et le tableau de bord
+          <code>/plugins</code> de la CLI lui attribue la mention <code>Managed</code>.
+        </li>
+        <li>
+          Ce guide opératoire décrit uniquement le mécanisme. L’ajout de cette entrée au fichier
+          <code>managed-settings.json</code> d’une organisation donnée relève de cette organisation, et non
+          d’une intervention de ce dépôt ou de ses responsables pour le compte d’une organisation qui l’adopte.
+        </li>
+      </ul>
+
+      <div class="pager">
+        <a class="prev" href="architecture.html">
+          <div class="dir">← Précédent</div>
+          <div class="ttl">Architecture</div>
+        </a>
+        <a class="next" href="index.html">
+          <div class="dir">Suivant →</div>
+          <div class="ttl">Accueil</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · généré à partir de <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Code source sur GitHub</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

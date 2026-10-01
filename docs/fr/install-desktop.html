@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation : application de bureau — hve-squad-plugin</title>
+  <meta name="description" content="Instructions d’installation pas à pas pour l’application de bureau GitHub Copilot et le parcours Paramètres > Extensions > Copilot > Plugins dans VS Code." />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="../assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="install-cli.html">Installation : CLI</a>
+        <a href="install-desktop.html" class="active">Installation : application de bureau</a>
+        <a href="install-vscode.html">Installation : VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html">Déploiement en entreprise</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Guide d’installation</div>
+      <h1>Installation via l’application de bureau / les paramètres Plugins de VS Code</h1>
+      <p class="lead">
+        L’application de bureau GitHub Copilot et les paramètres des plugins Copilot de VS Code permettent tous deux l’installation
+        à partir de la même entrée de la marketplace — aucun terminal n’est nécessaire.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>Prérequis</h2>
+      <ul>
+        <li>L’application de bureau GitHub Copilot, <strong>ou</strong> VS Code avec l’extension GitHub Copilot, avec une session connectée</li>
+        <li>Un accès en lecture à <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a> (dépôt public — aucune autorisation d’accès supplémentaire requise)</li>
+      </ul>
+
+      <h2>1. Ouvrir le panneau de paramètres Plugins</h2>
+      <p>
+        Dans VS Code : ouvrez <strong>Paramètres → Extensions → Copilot → Plugins</strong> (ou le
+        panneau Plugins équivalent dans l’application de bureau autonome). Ce panneau répertorie les plugins
+        installés et propose une action de recherche et d’installation pour en ajouter.
+      </p>
+
+      <h2>2. Rechercher et installer les deux plugins</h2>
+      <p>
+        Recherchez <code>Peter-N91/hve-squad-plugin</code> (ou collez l’URL du dépôt si le
+        panneau le permet). Cette marketplace publie <strong>deux</strong> entrées, et vous avez besoin
+        des deux :
+      </p>
+      <ul>
+        <li><code>hve-squad</code> — les agents, skills et hooks propres à la squad, ainsi que son entrée de serveur MCP</li>
+        <li><code>hve-squad-hve-core</code> — les agents et skills de <code>microsoft/hve-core</code> auxquels les rôles de la squad délèguent le travail, avec une version épinglée au commit exact sur lequel la version correspondante de hve-squad a été validée</li>
+      </ul>
+      <p>
+        Choisissez <strong>Installer</strong> pour chacun. Le client récupère
+        <code>.github/plugin/plugin.json</code> depuis ce dépôt, de la même manière que le CLI,
+        et enregistre les mêmes agents, skills, hooks et entrée de serveur MCP.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Installez hve-core depuis cette marketplace, et non depuis sa propre source.</strong> La plupart des rôles de la squad
+          correspondent à un agent hve-core ; avec <code>hve-squad</code> seul, ces rôles
+          restent donc impossibles à résoudre. Installer hve-core directement depuis <code>microsoft/hve-core</code>
+          fournit au contraire la version qui y est actuellement disponible, laquelle peut être en avance sur les tables de routage et les
+          chartes de rôle auxquelles votre version installée de la squad fait référence. L’entrée
+          <code>hve-squad-hve-core</code> épingle le commit validé : c’est précisément
+          la raison de sa publication ici.
+        </p>
+      </div>
+
+      <div class="screenshot-placeholder">
+        <!-- SCREENSHOT PLACEHOLDER: the Copilot Plugins settings panel with hve-squad-plugin found/installed -->
+        <div class="ph-icon">🖼️</div>
+        <div class="ph-label">Emplacement réservé à une capture d’écran</div>
+        <div class="ph-desc">Le panneau de paramètres Plugins de Copilot affichant hve-squad-plugin trouvé ou installé</div>
+      </div>
+
+      <h2>3. Vérifier le fonctionnement dans la conversation</h2>
+      <p>
+        Ouvrez Copilot Chat et demandez-lui d’utiliser la squad — par exemple,
+        <code>"use the squad to research this codebase"</code> — ou adressez-vous directement à un agent par
+        son nom qualifié par l’espace de noms, <code>hve-squad:squad-coordinator</code>. Une invocation réussie affiche
+        la réponse du coordinateur de la squad dans la vue de conversation.
+      </p>
+
+      <div class="screenshot-placeholder">
+        <!-- SCREENSHOT PLACEHOLDER: a successful hve-squad agent invocation shown in the Copilot chat view -->
+        <div class="ph-icon">🖼️</div>
+        <div class="ph-label">Emplacement réservé à une capture d’écran</div>
+        <div class="ph-desc">Une invocation réussie d’un agent hve-squad affichée dans la vue de conversation de Copilot</div>
+      </div>
+
+      <h2>Mises à jour ultérieures</h2>
+      <p>
+        Cette marketplace ne définit pas <code>autoUpdate</code> : les mises à jour sont donc explicites. Lorsqu’une nouvelle
+        version paraît, mettez à jour <strong>les deux</strong> entrées au cours de la même session — chaque version de hve-squad
+        épingle le commit hve-core sur lequel elle a été validée ; faire évoluer l’une sans
+        l’autre réintroduit donc précisément le décalage de versions que cet épinglage vise à éviter.
+      </p>
+      <p>
+        Dans le panneau Plugins, actualisez la liste de la marketplace, puis choisissez l’action de mise à jour pour
+        <code>hve-squad</code>. Pour <code>hve-squad-hve-core</code>, <strong>supprimez-le puis
+        réinstallez-le</strong> plutôt que d’utiliser l’action de mise à jour.
+      </p>
+
+      <div class="callout warn">
+        <p>
+          <strong><code>hve-squad-hve-core</code> doit être supprimé puis réinstallé, et non
+          mis à jour.</strong> Sa version enregistrée provient du fichier
+          <code>plugin.json</code> de hve-core en amont, et non de l’entrée de cette marketplace : une version qui ne change que
+          le commit épinglé laisse donc ce numéro inchangé. Toute action de mise à jour — bouton du panneau ou
+          <code>copilot plugin update</code> — le signale alors comme déjà à jour et conserve les
+          anciens fichiers. Le supprimer efface cet état, ce qui permet à la réinstallation de récupérer le nouveau
+          commit épinglé. Consultez
+          <a href="install-cli.html#do-not-install-official-hve-core">Installation : Copilot CLI</a> pour
+          l’explication complète et les commandes exactes.
+        </p>
+      </div>
+
+      <div class="callout warn">
+        <p>
+          <strong>N’installez pas également le plugin officiel hve-core.</strong> Si vous utilisez la squad,
+          obtenez hve-core uniquement via l’entrée <code>hve-squad-hve-core</code> de cette marketplace.
+          Installer le plugin officiel <code>hve-core</code> à ses côtés enregistre une seconde copie
+          de chaque agent et skill hve-core, qui suit la version courante en amont plutôt que le
+          commit validé. Les rôles de la squad sont associés aux agents hve-core par leur nom : une délégation peut donc
+          aboutir à cette copie non épinglée et contourner silencieusement l’épinglage. Le nom distinct de l’entrée permet
+          d’éviter un conflit à l’installation ; il ne constitue pas une recommandation d’utiliser les deux.
+        </p>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Même manifeste, même résultat.</strong> L’installation via le panneau Plugins de l’application de bureau ou de VS Code et la
+          commande CLI <code>copilot plugin install</code> utilisent toutes deux le même
+          manifeste <code>.github/plugin/plugin.json</code> dans ce dépôt — il n’existe aucune
+          distribution distincte réservée à l’application de bureau qu’il faudrait synchroniser. Consultez
+          <a href="install-cli.html">Installation : Copilot CLI</a> pour les étapes équivalentes en ligne de
+          commande et le diagramme du déroulement de l’installation.
+        </p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="install-cli.html">
+          <div class="dir">← Précédent</div>
+          <div class="ttl">Installation : Copilot CLI</div>
+        </a>
+        <a class="next" href="install-vscode.html">
+          <div class="dir">Suivant →</div>
+          <div class="ttl">Installation : notes pour VS Code</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · généré à partir de <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Code source sur GitHub</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

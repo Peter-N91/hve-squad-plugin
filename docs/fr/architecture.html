@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture — hve-squad-plugin</title>
+  <meta name="description" content="La relation entre le plugin et le serveur MCP : deux interfaces d’invocation de la squad et le problème connu lié à l’épinglage des versions entre les deux." />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="../assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="install-cli.html">Installation : CLI</a>
+        <a href="install-desktop.html">Installation : application de bureau</a>
+        <a href="install-vscode.html">Installation : VS Code</a>
+        <a href="architecture.html" class="active">Architecture</a>
+        <a href="enterprise-push.html">Déploiement à l’échelle de l’entreprise</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Référence</div>
+      <h1>Deux interfaces d’invocation, une seule squad</h1>
+      <p class="lead">
+        Ce plugin et son serveur MCP compagnon proposent deux façons d’accéder à la même
+        squad — choisissez selon que votre hôte délègue directement aux agents ou appelle uniquement des outils.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>Interface 1 — délégation directe aux agents (ce plugin)</h2>
+      <p>
+        L’installation de <code>hve-squad-plugin</code> enregistre <code>agents/squad/</code> et
+        <code>skills/squad/</code> directement auprès de l’hôte (Copilot CLI, VS Code ou l’application
+        de bureau). Le mécanisme <code>runSubagent</code>/<code>task</code> propre à l’hôte délègue au
+        coordinateur de la squad et à ses agents au sein du même processus, dans l’espace de noms <code>hve-squad:squad-*</code>.
+        Aucun processus serveur, aucun appel réseau — tout s’exécute sous forme d’agents et de compétences que
+        l’hôte sait déjà charger.
+      </p>
+
+      <h2>Interface 2 — invocation par appel d’outils via <code>@hve-squad/mcp</code></h2>
+      <p>
+        Le fichier <code>.mcp.json</code> de ce plugin enregistre également le serveur compagnon
+        <a href="https://github.com/Peter-N91/hve-squad-mcp">Peter-N91/hve-squad-mcp</a>
+        via stdio. <strong>Il s’agit du même hôte</strong> — Copilot CLI, VS Code et l’application de bureau
+        prennent tous en charge nativement les appels d’outils MCP, en complément de leur propre interface de délégation aux agents,
+        et non à sa place. L’interface 2 n’est pas réservée à un autre client dépourvu d’agents ; elle donne
+        à la <em>même</em> session un point d’entrée supplémentaire : le modèle peut appeler de manière autonome
+        <code>squad_research</code>, <code>squad_plan</code>, <code>squad_review</code>,
+        <code>squad_architect</code> ou <code>squad_run</code> en cours de conversation, sans que personne
+        ne désigne d’abord un agent.
+      </p>
+      <p>
+        En <strong>mode délégué</strong> (le modèle d’exécution actuel, en phase 0), chaque appel d’outil
+        renvoie la persona du coordinateur de la squad, la ligne correspondante de la table de routage et une demande
+        de délégation structurée ; c’est la boucle d’exécution des agents de l’hôte appelant qui exécute réellement
+        <code>runSubagent</code>/<code>task</code> pour la traiter. Le serveur MCP lui-même n’appelle aucun
+        modèle et ne détient aucun identifiant d’authentification — c’est un routeur, pas un environnement d’exécution.
+      </p>
+      <p>
+        Un hôte réellement différent — Copilot Studio ou M365 Copilot — accède en revanche à
+        <code>hve-squad-mcp</code> par son <strong>mode embarqué/distant via HTTP</strong> distinct,
+        un déploiement séparé hébergé dans Azure et documenté dans le fichier
+        <code>host/RUNBOOK.md</code> de ce dépôt. Ce mode n’est aucunement configuré dans le fichier
+        <code>.mcp.json</code> de ce plugin.
+      </p>
+
+      <div class="mermaid">
+flowchart TD
+    subgraph Plugin["hve-squad-plugin (this repo)"]
+        A["agents/squad/*.agent.md<br/>(27 agents)"]
+        S["skills/squad/ + invocations/<br/>(squad skill, 7 invocation skills)"]
+        H["hooks.json<br/>(enforcement backstop)"]
+        M[".mcp.json<br/>registers @hve-squad/mcp"]
+    end
+
+    subgraph Host["Copilot CLI / VS Code / desktop app (one session, two paths)"]
+        HD["Direct agent-dispatch path<br/>(user or agent names hve-squad:squad-*)"]
+        HM["Autonomous tool-call path<br/>(model calls squad_* mid-conversation)"]
+    end
+
+    subgraph MCPServer["Peter-N91/hve-squad-mcp (stdio, delegated mode)"]
+        T["5 coarse tools:<br/>squad_research, squad_plan,<br/>squad_review, squad_architect, squad_run"]
+    end
+
+    subgraph Remote["Copilot Studio / M365 (separate deployment, not via this plugin)"]
+        R["hve-squad-mcp embedded/HTTP mode"]
+    end
+
+    HD -- "direct dispatch" --> A
+    A --> S
+    S --> H
+
+    HM -- "tool call" --> T
+    T -- "returns persona + routing row<br/>+ framed dispatch request" --> HM
+    HM -- "same host's runSubagent/task<br/>runs the actual dispatch" --> A
+
+    M -.->|"registers (stdio)"| T
+      </div>
+
+      <h2>Ce qui est réellement épinglé, et ce qui ne l’est pas</h2>
+      <p>
+        Le serveur en mode délégué <strong>ne fournit ni n’utilise</strong> de copie intégrée des
+        personas des agents de la squad — son propre code source le précise explicitement : le
+        <code>systemPrompt</code> renvoyé par un appel d’outil est une courte reformulation rédigée à la main de la seule
+        règle de discipline de délégation, et délibérément <em>pas</em> une copie du véritable
+        contenu des fichiers <code>.agent.md</code>. L’hôte effectue ensuite sa propre délégation vers les
+        <strong>véritables fichiers d’agents installés par ce plugin, épinglés sur un tag</strong> — la version de
+        <code>@hve-squad/mcp</code> qui a répondu à l’appel d’outil n’a donc aucune incidence sur la
+        persona réellement exécutée. Il n’y a ici aucun risque de « deux copies de l’ensemble des agents susceptibles de diverger ».
+      </p>
+      <div class="callout warn">
+        <p>
+          <strong>Ce qui manquait réellement (désormais corrigé) :</strong> <code>.mcp.json</code>
+          référençait auparavant <code>@hve-squad/mcp</code> sans version, que <code>npx</code> résout vers
+          la version actuellement désignée par <code>@latest</code> — deux installations effectuées à des dates différentes
+          pouvaient donc exécuter silencieusement un code serveur différent, sans garantie de reproductibilité. Ce
+          plugin épingle désormais une <strong>version exacte et testée</strong>
+          (<code>@hve-squad/mcp@0.7.0</code> au moment de la rédaction). La mise à jour de cette version épinglée est une
+          action délibérée, distincte de la régénération du contenu des agents du plugin — le
+          générateur (<code>Build-SquadPlugin.ps1</code>, paramètre <code>-McpVersion</code>) ne
+          modifie jamais silencieusement cet épinglage lors d’une régénération de contenu sans rapport.
+        </p>
+        <p>
+          <strong>Ce qui reste un point d’attention, de moindre portée :</strong> les métadonnées de routage de haut niveau
+          (<code>tools.catalog.yml</code> / <code>generated/mcp-tools.schema.json</code>,
+          qui sont bien incluses dans le package npm) sont générées à partir de la copie propre à <code>hve-squad-mcp</code> du fichier
+          <code>squad-routing.instructions.md</code>, lors de sa dernière publication. Si
+          la table de routage de <code>hve-squad</code> change sans mise à jour correspondante de la version MCP épinglée,
+          le niveau, le conseil et les points de contrôle indiqués par un appel d’outil peuvent devenir légèrement obsolètes par rapport
+          aux agents actuels du plugin — il s’agit d’une table de routage obsolète, et non d’un décalage du contenu
+          des agents. La mesure d’atténuation repose sur la même discipline que ci-dessus : refaire les tests et
+          épingler délibérément une nouvelle version lorsque le routage a changé, plutôt que de suivre <code>@latest</code>.
+        </p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="install-vscode.html">
+          <div class="dir">← Précédent</div>
+          <div class="ttl">Installation : particularités de VS Code</div>
+        </a>
+        <a class="next" href="enterprise-push.html">
+          <div class="dir">Suivant →</div>
+          <div class="ttl">Déploiement à l’échelle de l’entreprise</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · généré à partir de <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · serveur MCP compagnon : <a href="https://github.com/Peter-N91/hve-squad-mcp">Peter-N91/hve-squad-mcp</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Code source sur GitHub</a>
+      </p>
+    </div>
+  </footer>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'strict' });
+  </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation : notes pour VS Code — hve-squad-plugin</title>
+  <meta name="description" content="Notes spécifiques à VS Code en complément de l’installation du plugin dans l’application de bureau, avec une alternative sans plugin reposant uniquement sur MCP." />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="../assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="install-cli.html">Installation : CLI</a>
+        <a href="install-desktop.html">Installation : application de bureau</a>
+        <a href="install-vscode.html" class="active">Installation : VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html">Déploiement en entreprise</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Guide d’installation</div>
+      <h1>Notes pour VS Code</h1>
+      <p class="lead">
+        Pour VS Code, il n’y a pas de différence notable par rapport à
+        <a href="install-desktop.html">l’installation via le panneau Plugins de l’application de bureau</a> — cette page est donc
+        volontairement courte. Le seul point à connaître est l’alternative sans plugin, reposant uniquement sur MCP, présentée ci-dessous.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>L’installation du plugin est identique à celle dans l’application de bureau</h2>
+      <p>
+        Le panneau <strong>Paramètres → Extensions → Copilot → Plugins</strong> de VS Code installe ce
+        plugin de la même façon que l’application de bureau autonome Copilot, en utilisant le même
+        manifeste <code>.github/plugin/plugin.json</code>. Consultez
+        <a href="install-desktop.html">Installation : application de bureau</a> pour la procédure détaillée — elle s’applique
+        à VS Code sans modification, y compris l’obligation d’installer
+        <strong>les deux plugins</strong>, <code>hve-squad</code> et <code>hve-squad-hve-core</code>, et de
+        les mettre à jour ensemble. Deux règles restent inchangées : actualisez
+        <code>hve-squad-hve-core</code> en le supprimant puis en le réinstallant, plutôt qu’en utilisant
+        l’action de mise à jour, et n’installez pas le plugin officiel <code>hve-core</code> à ses côtés.
+      </p>
+
+      <h2>Alternative : MCP uniquement, sans installation de plugin</h2>
+      <p>
+        Si vous ne souhaitez pas du tout installer le plugin — par exemple, si vous voulez seulement accéder
+        à la squad par des appels d’outils plutôt que par l’invocation directe d’agents — vous pouvez enregistrer directement le serveur
+        compagnon <code>@hve-squad/mcp</code> dans le fichier <code>.vscode/mcp.json</code> d’un espace de travail.
+        C’est la configuration décrite dans le fichier
+        <a href="https://github.com/Peter-N91/hve-squad-plugin/blob/main/skills/squad/mcp-server.template.json"><code>skills/squad/mcp-server.template.json</code></a> de ce plugin :
+      </p>
+      <pre><code>{
+  "servers": {
+    "hve-squad": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@hve-squad/mcp@0.7.1"]
+    }
+  }
+}</code></pre>
+      <p>
+        Épinglez une version précise plutôt que d’utiliser simplement <code>@hve-squad/mcp</code> : sans version épinglée,
+        <code>npx</code> sélectionne la version marquée <code>latest</code> au moment de l’exécution ; deux
+        machines configurées à des dates différentes obtiennent donc des serveurs différents. Chaque version publiée de
+        <code>@hve-squad/mcp</code> est construite pour une version précise de hve-squad, selon
+        la même discipline d’appariement que les deux entrées de la marketplace.
+      </p>
+      <p>
+        Fusionnez cette entrée dans <code>.vscode/mcp.json</code> (ne remplacez pas les serveurs dont vous
+        dépendez déjà), rechargez VS Code, et les outils de la squad
+        (<code>squad_research</code>, <code>squad_plan</code>, <code>squad_review</code>,
+        <code>squad_architect</code>, <code>squad_run</code>) deviennent invocables par le modèle — sans
+        installer les agents ni les skills du plugin. Consultez
+        <a href="architecture.html">Architecture</a> pour comprendre le lien entre cette interface d’appels d’outils et
+        l’interface d’invocation directe des agents du plugin.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Pourquoi proposer cette voie séparément.</strong> La voie MCP uniquement s’adresse aux hôtes ou
+          aux workflows qui consomment des outils mais ne disposent d’aucune interface d’installation de plugins (ou à
+          un utilisateur qui souhaite invoquer des outils sans adopter l’espace de noms du plugin). La plupart des
+          utilisateurs de VS Code qui procèdent à une installation interactive devraient simplement utiliser le
+          <a href="install-desktop.html">panneau de paramètres Plugins</a>.
+        </p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="install-desktop.html">
+          <div class="dir">← Précédent</div>
+          <div class="ttl">Installation : application de bureau</div>
+        </a>
+        <a class="next" href="architecture.html">
+          <div class="dir">Suivant →</div>
+          <div class="ttl">Architecture</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · généré à partir de <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Code source sur GitHub</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

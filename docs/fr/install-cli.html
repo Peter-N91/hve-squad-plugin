@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation : Copilot CLI — hve-squad-plugin</title>
+  <meta name="description" content="Instructions d’installation pas à pas de hve-squad-plugin avec GitHub Copilot CLI, vérification et résolution des espaces de noms." />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="../assets/logo.svg" alt="" />hve<span class="dot">-</span>squad-plugin</a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="install-cli.html" class="active">Installation : CLI</a>
+        <a href="install-desktop.html">Installation : application de bureau</a>
+        <a href="install-vscode.html">Installation : VS Code</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="enterprise-push.html">Déploiement en entreprise</a>
+        <a href="https://github.com/Peter-N91/hve-squad-plugin">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow">Guide d’installation</div>
+      <h1>Installation via Copilot CLI</h1>
+      <p class="lead">
+        Enregistrez la marketplace du plugin, installez-le et vérifiez que l’espace de noms <code>hve-squad</code>
+        est correctement résolu avant d’invoquer un agent.
+      </p>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="container">
+      <h2>Prérequis</h2>
+      <ul>
+        <li>GitHub Copilot CLI installé, avec une session connectée</li>
+        <li>Un accès en lecture à <a href="https://github.com/Peter-N91/hve-squad-plugin">Peter-N91/hve-squad-plugin</a> (dépôt public — aucune autorisation d’accès supplémentaire requise)</li>
+      </ul>
+
+      <div class="callout">
+        <p>
+          <strong>Installez les deux plugins, toujours ensemble.</strong> Cette marketplace publie deux
+          entrées : <code>hve-squad</code> (les agents et skills propres à la squad) et
+          <code>hve-squad-hve-core</code> (les agents et skills de <code>microsoft/hve-core</code>
+          auxquels la squad délègue le travail). La plupart des rôles de la squad correspondent à un agent hve-core ; installer
+          <code>hve-squad</code> seul laisse donc ces rôles impossibles à résoudre.
+        </p>
+        <p>
+          Installez <code>hve-squad-hve-core</code> depuis <em>cette</em> marketplace plutôt que directement depuis
+          <code>microsoft/hve-core</code>. L’entrée de cette marketplace est épinglée au SHA exact du
+          commit sur lequel la version correspondante de hve-squad a été construite et validée — le même
+          épinglage que celui enregistré dans le fichier <code>apm.yml</code> de cette version et vérifié par son contrôle cast-delta.
+          Installer hve-core depuis sa propre source fournit au contraire la version qui y est actuellement disponible, laquelle
+          peut être en avance sur les tables de routage et les chartes de rôle auxquelles votre version installée de la squad
+          fait référence.
+        </p>
+      </div>
+
+      <h2>1. Enregistrer la marketplace</h2>
+      <pre><code>copilot plugin marketplace add Peter-N91/hve-squad-plugin</code></pre>
+
+      <h2>2. Installer les deux plugins</h2>
+      <pre><code>copilot plugin install hve-squad@hve-squad-plugin
+copilot plugin install hve-squad-hve-core@hve-squad-plugin</code></pre>
+      <p>
+        Le suffixe après <code>@</code> est le <strong>nom de la marketplace</strong>
+        (<code>hve-squad-plugin</code>, le champ <code>name</code> dans
+        <code>marketplace.json</code>) — et non le propriétaire du dépôt. Les plugins installés se trouvent dans
+        <code>installed-plugins/hve-squad-plugin/&lt;plugin&gt;/</code>, qui reprend la même
+        structure <code>marketplace/plugin</code>.
+      </p>
+      <p>
+        L’installation de <code>hve-squad</code> lit le manifeste
+        <code>.github/plugin/plugin.json</code> de ce dépôt et enregistre tout ce qu’il référence :
+        les 27 agents dans <code>agents/squad/</code>, le skill squad et ses skills d’invocation dans
+        <code>skills/squad/</code>, les scripts de contrôle de <code>hooks.json</code> et
+        l’enregistrement du serveur dans <code>.mcp.json</code> pour <code>@hve-squad/mcp</code>.
+        <code>hve-squad-hve-core</code> fournit ensuite les agents et skills hve-core auxquels ces rôles
+        de la squad délèguent le travail, à la version du commit épinglé.
+      </p>
+
+      <h2>3. Vérifier l’installation</h2>
+      <pre><code>copilot plugin list</code></pre>
+      <p>
+        Vérifiez que <strong>les deux plugins</strong>, <code>hve-squad</code> et <code>hve-squad-hve-core</code>,
+        apparaissent avec un statut indiquant qu’ils sont actifs. Si un seul apparaît, relancez
+        l’installation manquante de l’étape 2 — une squad sans hve-core installé fera remonter le problème plutôt que de déléguer
+        lorsqu’un agent associé à un rôle est introuvable.
+      </p>
+
+      <div class="screenshot-placeholder">
+        <!-- SCREENSHOT PLACEHOLDER: copilot plugin list output showing hve-squad registered -->
+        <div class="ph-icon">🖼️</div>
+        <div class="ph-label">Emplacement réservé à une capture d’écran</div>
+        <div class="ph-desc">Sortie de copilot plugin list montrant hve-squad enregistré</div>
+      </div>
+
+      <h2>4. Résolution des espaces de noms</h2>
+      <p>
+        Une fois le plugin installé, tous les agents fournis sont accessibles sous
+        l’espace de noms <code>hve-squad:squad-*</code> — le nom du plugin (<code>hve-squad</code>, issu de
+        <code>plugin.json</code>) est ajouté en préfixe au nom de chaque agent. Par exemple :
+      </p>
+      <pre><code># Ask Copilot CLI to dispatch the coordinator directly
+hve-squad:squad-coordinator
+
+# Or let natural language resolve to it
+"use the squad to research this codebase"</code></pre>
+      <p>
+        Si deux plugins installés fournissent un agent portant le même nom court, le préfixe d’espace de noms
+        permet de les distinguer — vous pouvez toujours l’utiliser explicitement sans risque d’ambiguïté.
+      </p>
+
+      <h2>Mises à jour ultérieures</h2>
+      <p>
+        Cette marketplace ne définit délibérément <strong>pas</strong> <code>autoUpdate</code>. Les
+        deux entrées forment une paire assortie : une mise à jour sans intervention qui ferait évoluer <code>hve-squad</code>
+        tout en laissant <code>hve-squad-hve-core</code> à son ancienne version (ou l’inverse)
+        réintroduirait précisément le décalage de versions que l’entrée épinglée vise à éviter. Les mises à jour sont
+        donc explicites, et les deux entrées évoluent ensemble.
+      </p>
+      <p>Pour adopter une nouvelle version :</p>
+      <pre><code># 1. Refresh the marketplace so the CLI sees the new entries and their pins
+copilot plugin marketplace update Peter-N91/hve-squad-plugin
+
+# 2. Update hve-squad in place
+copilot plugin update hve-squad@hve-squad-plugin
+
+# 3. Replace hve-squad-hve-core — uninstall THEN install, never update
+copilot plugin uninstall hve-squad-hve-core@hve-squad-plugin
+copilot plugin install hve-squad-hve-core@hve-squad-plugin
+
+# 4. Confirm both moved
+copilot plugin list</code></pre>
+
+      <div class="callout warn">
+        <p>
+          <strong><code>copilot plugin update</code> ne fonctionne pas pour
+          <code>hve-squad-hve-core</code>. Désinstallez-le, puis installez-le.</strong> Ce n’est pas une
+          préférence — le mécanisme de mise à jour ne peut pas détecter un nouvel épinglage pour cette entrée et vous laissera
+          sur l’ancienne version de hve-core tout en signalant une réussite.
+        </p>
+        <p>
+          La raison est que <code>plugin update</code> compare la version enregistrée au moment de
+          l’installation à celle qu’il détermine maintenant ; pour cette entrée, ces deux versions proviennent
+          <strong>du fichier <code>plugin.json</code> propre à hve-core en amont</strong> (par exemple
+          <code>3.2.2</code>) — et non du champ <code>version</code> de l’entrée
+          de cette marketplace. Lorsqu’une version de hve-squad ne modifie que <code>source.sha</code> et que
+          la version propre à hve-core en amont n’a pas changé, les deux numéros restent identiques ; le CLI répond donc
+          <code>already at latest</code> et conserve l’arborescence précédemment récupérée. Le commit épinglé a changé ;
+          les fichiers sur disque, non.
+        </p>
+        <p>
+          Une désinstallation préalable efface cet état enregistré : l’installation suivante résout donc
+          <code>source.sha</code> à nouveau et récupère l’arborescence sur laquelle la version actuelle a été
+          validée. Faites-le à chaque adoption d’une nouvelle version, même lorsque
+          <code>copilot plugin update hve-squad-hve-core@hve-squad-plugin</code> affirme qu’il
+          n’y a rien à faire.
+        </p>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Ne mettez jamais l’un à jour sans l’autre.</strong> Chaque version de hve-squad épingle le
+          commit hve-core sur lequel elle a été validée. Lorsqu’une version change ce commit épinglé, le
+          SHA de l’entrée <code>hve-squad-hve-core</code> change aussi — mettre à jour
+          <code>hve-squad</code> seul vous fait donc exécuter le nouveau contenu de la squad avec un ancien
+          hve-core pour lequel il n’a pas été conçu. Si vous avez un doute sur l’état de votre installation, désinstallez
+          puis réinstallez les deux entrées.
+        </p>
+        <p>
+          Un répertoire de plugins par client. Le CLI stocke les plugins dans
+          <code>$COPILOT_HOME</code>, et les clients qui intègrent Copilot CLI (applications de bureau, intégrations
+          dans les IDE) font couramment pointer cette variable vers leur propre répertoire plutôt que vers
+          <code>~/.copilot</code>. Une mise à jour dans un terminal ne met donc <em>pas</em> à jour la
+          copie utilisée par un client qui intègre le CLI. Exécutez la paire désinstallation/installation une fois pour chaque répertoire de plugins
+          depuis lequel vous invoquez effectivement la squad.
+        </p>
+      </div>
+
+      <h2 id="do-not-install-official-hve-core">N’installez pas également le plugin officiel hve-core</h2>
+      <div class="callout warn">
+        <p>
+          <strong>Si vous utilisez la squad, installez hve-core uniquement via l’entrée
+          <code>hve-squad-hve-core</code> de cette marketplace.</strong> N’installez pas en plus le plugin officiel
+          <code>hve-core</code> depuis <code>microsoft/hve-core</code>, et n’enregistrez pas
+          la marketplace propre à hve-core à côté de celle-ci.
+        </p>
+        <p>
+          Les deux entrées fournissent les mêmes fichiers d’agents, de skills et d’instructions sous des noms de plugin
+          différents, et l’entrée officielle suit la version courante en amont plutôt que le commit
+          validé. Avec les deux installées, vous obtenez deux copies enregistrées de chaque artefact hve-core,
+          généralement à deux commits différents. Les rôles de la squad sont associés aux agents hve-core par leur nom : une
+          délégation peut donc aboutir à la copie non épinglée — les tables de routage, les chartes de rôle et les
+          garanties du contrôle cast-delta sur lesquelles votre version installée de hve-squad a été construite ne s’appliquent plus.
+          Les symptômes sont ambigus : agents dupliqués ou masqués dans
+          <code>copilot plugin list</code>, rôles associés à un agent dont la charte ne
+          correspond pas à la table de routage, ou délégations qui se comportent différemment entre deux machines utilisant
+          la même version de hve-squad.
+        </p>
+        <p>
+          L’entrée <code>hve-squad-hve-core</code> porte un nom distinct afin que les deux <em>puissent</em>
+          être enregistrées côte à côte sans conflit de noms à l’installation. Il s’agit d’une
+          précaution de distribution pour qu’une installation préexistante ne bloque pas celle-ci — ce n’est pas une
+          recommandation d’utiliser les deux. Si le plugin officiel est déjà installé, supprimez-le
+          avant d’invoquer la squad :
+        </p>
+        <pre><code>copilot plugin list
+copilot plugin uninstall hve-core@&lt;its-marketplace&gt;</code></pre>
+        <p>
+          Si vous avez besoin du plugin officiel pour un autre travail, conservez-le dans un répertoire de plugins distinct
+          (avec une valeur différente de <code>$COPILOT_HOME</code>) plutôt qu’à côté de la squad.
+        </p>
+      </div>
+
+      <h2>Déroulement de l’installation</h2>
+      <div class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant CLI as Copilot CLI
+    participant MP as Marketplace (this repo)
+    participant Repo as hve-squad-plugin
+    participant Core as microsoft/hve-core
+    participant Reg as Local plugin registry
+
+    U->>CLI: copilot plugin marketplace add Peter-N91/hve-squad-plugin
+    CLI->>MP: fetch .github/plugin/marketplace.json
+    MP-->>CLI: 2 entries — hve-squad (ref main), hve-squad-hve-core (pinned sha)
+
+    U->>CLI: copilot plugin install hve-squad@hve-squad-plugin
+    CLI->>Repo: fetch plugin.json, then agents/, skills/, hooks.json, .mcp.json
+    CLI->>Reg: register 27 agents + squad skill + hooks + MCP server
+
+    U->>CLI: copilot plugin install hve-squad-hve-core@hve-squad-plugin
+    CLI->>Core: fetch content at the pinned commit SHA
+    CLI->>Reg: register hve-core agents + skills
+
+    Reg-->>CLI: namespaces active, squad roles resolvable
+    U->>CLI: hve-squad:squad-coordinator ...
+    CLI-->>U: dispatches Squad Coordinator, which can now reach hve-core roles
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="index.html">
+          <div class="dir">← Précédent</div>
+          <div class="ttl">Accueil</div>
+        </a>
+        <a class="next" href="install-desktop.html">
+          <div class="dir">Suivant →</div>
+          <div class="ttl">Installation : application de bureau</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        hve-squad-plugin · généré à partir de <a href="https://github.com/Peter-N91/hve-squad">Peter-N91/hve-squad</a>
+        · <a href="https://github.com/Peter-N91/hve-squad-plugin">Code source sur GitHub</a>
+      </p>
+    </div>
+  </footer>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'strict' });
+  </script>
+</body>
+</html>

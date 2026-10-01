@@ -1,0 +1,74 @@
+HVE SQUAD PLUGIN DOCUMENTATION
+
+This site shares the Eleventy/Pagefind documentation foundation and typography
+used by HVE Squad MCP and MAF. The plugin uses HVE Squad's exact blue/cyan/green
+identity, not a fourth product palette. The main hve-squad repository is unchanged.
+
+Scope
+Only documentation, its presentation assets and its build workflow are authored
+here. agents/, skills/, .github/plugin/, plugin.json, hooks and MCP configuration
+remain generated distribution artifacts. Do not hand-edit them for site changes.
+Keep the documentation paths outside any upstream regeneration replacement list.
+
+Build and preview
+  Node.js 22+ is required only for website development.
+  npm ci
+  npm run docs:test
+  npm run docs:build
+  npm run docs:dev
+
+The development server uses port 4175. Search indexes are rebuilt by docs:build;
+restart docs:dev after changing content to refresh search. Generated _site is
+ignored by Git. Pull requests build and validate; only main publishes to Pages.
+
+Content and structure
+  docs/*.html                  Original English technical content
+  docs/fr/*.html               Complete French equivalents
+  docs/enterprise-push-runbook.md Original runbook, preserved as a public asset
+  site/locales.json            Native language names, paths, directions and UI
+  site/pages.njk               Shared shell
+  site/_includes/              Navigation, contents and footer extension
+  site/assets/site.css         Shared tokens, typography, layout and themes
+  site/assets/plugin.css       Existing plugin components and diagram presentation
+  scripts/docs-content.mjs      Extracts both original hero and main content
+  scripts/diagram-locales.mjs   Exact label translations, no graph changes
+  scripts/check-docs.mjs        Source/translation/link/code fidelity checks
+
+The English HTML files remain unchanged. Their original head/navigation/styles
+are source material, not the deployed shell. The renderer carries the hero headline
+and introduction into the reading column and changes only logo lettering to the
+approved HVE Squad + Plugin lockup. Existing page navigation, placeholders,
+warnings, footers, technical examples and URLs remain. Adding French does not
+silently correct or modernize product claims.
+
+Brand
+  Badge frame: #2563EB -> #06B6D4 -> #22C55E, 0/50/100%, bottom-left to top-right
+  Navy field: #0F172A; agent nodes: #60A5FA; execution hub: #4ADE80
+  Functional light accent: #2563EB; dark accent: #60A5FA
+  Manrope headings; Source Sans 3 prose and real italics; JetBrains Mono code
+  Font files are self-hosted with their original SIL Open Font License notices.
+
+Diagrams
+Mermaid is pinned as a development dependency and served locally only on pages
+that contain diagrams. It uses strict rendering and the current light/dark tokens,
+with no CDN requests. Diagram source remains accessible without JavaScript and
+when rendering fails. Diagrams fit the reading column by default; readers can
+switch to full size and scroll within the diagram without widening the page.
+English Mermaid source is preserved; French diagrams change
+only declared labels, not graph edges, node identities or installation commands.
+
+Languages
+Add a locale with its BCP 47 code, native name, one-segment path prefix, ltr/rtl
+direction, and every UI/page label in site/locales.json. Translate all six pages,
+including header.hero (which is outside main in the original sources), title,
+description, footer and accessible labels. Keep code, links, IDs and Mermaid source
+unchanged. Add diagram labels to scripts/diagram-locales.mjs for the new language.
+Missing files, keys, headings or diagram translations fail the build explicitly.
+English-derived section IDs preserve the page/section across language changes.
+Pagefind indexes every HTML language separately.
+
+Future HVE Squad adoption
+The approved colours/fonts and shell are reusable for the main HVE Squad site.
+The footer-extra.njk extension point remains empty. No newsletter form, provider,
+analytics or personal-data collection is enabled. Subscription work needs a real
+provider, consent/privacy wording and explicit success/error handling.
