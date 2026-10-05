@@ -15,7 +15,7 @@ This charter is advisory only. It does not run migration commands, apply schema 
 
 ## Governing Integration
 
-The two skills are registered as opt-in external cast resources in `skills/squad/references/rules/squad-roster.md`. Install their shared plugin with:
+The two skills are registered as opt-in external cast resources in `references/roster-catalog.md`. Install their shared plugin with:
 
 ```text
 copilot plugin marketplace add fredgis/sql-migration-advisor

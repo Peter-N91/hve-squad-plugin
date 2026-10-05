@@ -40,9 +40,11 @@ The intake gate is the operator's pre-work readiness check on the inputs a turn 
 
 ## Council Procedure
 
-The council is the operator's pre-implementation cross-check. The coordinator triggers it when the user explicitly asks for a council, a validation, a cross-check, or a pre-implementation review, or when a request mixes implementation language with risk language and crosses two or more council-member domains (architecture, security, cost, product-fit, RAI). The full protocol lives in `skills/squad/references/rules/squad-council.md`; the operator's view is:
+The council is the operator's pre-implementation cross-check. The coordinator triggers it when the user explicitly asks for a council, a validation, a cross-check, or a pre-implementation review, or when a request mixes implementation language with risk language and crosses two or more council-member domains (architecture, security, cost, product-fit) or raises any RAI concern. The full protocol lives in `skills/squad/references/rules/squad-council.md`; the operator's view is:
 
-1. The coordinator dispatches the default council in a single parallel batch: `architect`, `security`, `cost-manager`, `product-owner`, plus optional `rai` when AI/ML, training data, agent autonomy, or regulated data is in scope.
+1. The coordinator dispatches a **task-fit** council in a single parallel batch: only the roles for the lenses the work touches (`architect`, `security`, `cost-manager`, `product-owner`, `rai`), recording each lens left out under `Council Members Not Proposed` with its reason. There is no fixed quorum.
+   * A needed role missing from the roster is offered as a **council extension**: in the Init confirmation when the opening request already signals a council; at the council's `confirm` step in interactive mode, where the user accepts, adjusts, or declines; and in autopilot or autonomous mode only when a needed role is missing, never as a new question when the roster already covers the work. Watch Mode escalates with the role to add as the remediation and never adds it itself.
+   * A decline is recorded as a `## Council Waiver <timestamp> <topic-id>` decision. It satisfies the Implementation Gate for the topic but never clears a Risk Gate or an Impactful-Action Gate.
 2. Each council role returns a finding with a verdict label (`Approve`, `Conditional`, `Concern`, `Block`) and a risk label (`Risk: Low`, `Risk: Medium`, `Risk: High`).
 3. The Squad Scribe synthesizes the findings using a most-restrictive-wins rule: any `Block` or any `Risk: High` drives a `Stop` verdict; any `Conditional` (with no blockers) drives `Go-With-Conditions`; otherwise the verdict is `Go`.
 4. The Scribe appends a single `## Council Verdict <timestamp> <topic-id>` entry to `decisions.md`. The coordinator does not write the verdict.
@@ -56,7 +58,7 @@ The Implementation Gate is what makes the squad a methodology instead of a route
 2. **Implementation may not begin cold.** Confirm all three on disk, by listing the directory and reading the file, before dispatching the producing role:
    * a research artifact under the `researcher` Deliverable Root for the topic — if missing, dispatch `researcher` first;
    * a plan artifact under the `lead` Deliverable Root for the topic — if missing, dispatch `lead` first;
-   * a non-`Stop` Council Verdict for the topic when the request crosses two or more council-member domains — if missing, run the council row first.
+   * a non-`Stop` Council Verdict, or a user's `## Council Waiver`, for the topic when the request crosses two or more council-member domains — if neither exists, run the council row first.
 3. When a precondition is unmet, dispatch the missing stage or escalate. **Never produce the missing research, plan, or verdict inline**, and never advance because the request "is only a document". Skipping research and plan to reach the deliverable faster is the single most common way a squad turn degrades into one model improvising, and it is invisible afterwards because the deliverable still looks finished.
 4. On the verdict: `Go` or `Go-With-Conditions` permits dispatch with the conditions attached as inputs; `Stop` escalates. A user may override `Stop`, and the override is recorded through the Scribe before any dispatch.
 
@@ -74,7 +76,7 @@ The methodology does not end at the deliverable. After any producing role lands 
 Initialization is outside Cost Preflight. The confirmed bootstrap Scribe dispatch seeds the state and rate table, is recorded as setup spend, and requires no ceiling slot. After initialization completes, before the first work child or its Scribe handoff and before every later dispatch round, the owning coordinator applies *Cost Preflight* from `references/consumption.md`:
 
 1. Enumerate the fixed and maximum conditional dispatch slots through the selected mode boundary, including coordinator and Scribe orchestration. A pre-Plan autopilot manifest reserves all possible artifact-owning fan-out roles; an unmapped or unbounded slot makes confidence low.
-2. Calculate the calibrated point estimate and its `3.0` admission reserve from the canonical class and model-rate tables. `auto`, unresolved or missing model rates, invalid rates, incomplete demand, or ineligible calibration returns low confidence.
+2. Calculate the calibrated point estimate and its `3.0` admission reserve from the canonical class and model-rate tables. `auto`, unresolved or missing model rates, invalid rates, incomplete demand, or ineligible calibration returns low confidence. Evaluated spend is `currentRun.estCostUsd` plus any pending reservation for a returned child whose Scribe hand-off is not yet verified.
 3. Directly append the Cost Preflight decision and compare-and-swap only `currentRun.costPreflight` while no parallel writer exists. Read both back. This deterministic transaction is the only coordinator-owned state write and adds no child model dispatch.
 4. Dispatch only from persisted `within-ceiling` or `approved-over-ceiling` rounds. An `over-ceiling` result offers stop or proceed; explicit proceed appends the approved round defined in `references/consumption.md`. `cannot-confirm` and a ceiling already reached remain non-admitting.
 5. Give each admitted child the Decision Ref, round id, and slot. The Scribe writes them into history, rejects an unpermitted slot, and preserves the latest preflight object on later state advances. Approved-over-ceiling work runs as sequential child-plus-Scribe units, re-reading accumulated estimated spend before each unit and starting none at or above the ceiling.
@@ -111,17 +113,37 @@ Autopilot removes the human turn between stages; it does not remove the stages. 
 2. **intake** — `intake-validator` (+`analyst` or `product-owner` on remediation) — a `## Intake Readiness Verdict` in `decisions.md` — requirement or input artifacts are in scope.
 3. **research** — `researcher` — a research artifact under the `researcher` Deliverable Root — the request is classified.
 4. **plan** — `lead` — a plan artifact under the `lead` Deliverable Root — a research artifact exists.
-5. **council** — `architect`, `security`, `cost-manager`, `product-owner` (+`rai` when relevant) — a `## Council Verdict` in `decisions.md` — a plan artifact exists.
-6. **implement** — `developer`, or the fan-out specialists — the artifact at each producing role's Deliverable Root — a plan artifact and a non-`Stop` Council Verdict exist.
+5. **council** — the task-fit subset of `architect`, `security`, `cost-manager`, `product-owner`, `rai` selected from the roster — a `## Council Verdict` (or the user's `## Council Waiver`) in `decisions.md` — a plan artifact exists.
+6. **implement** — `developer`, or the fan-out specialists — the artifact at each producing role's Deliverable Root — a plan artifact and a non-`Stop` Council Verdict or a Council Waiver exist.
 7. **review** — `tester` — a review record plus its `history/<agent>.md` entry — the implement stage's artifacts exist.
 
 **Deliverable fan-out replaces the implement row only.** When the plan's deliverable list names two or more artifact-owning roles on the team — a roster row whose `Deliverable Root` names a real path, counting every one except `researcher`, `lead`, and `tester` — dispatch each owning specialist in dependency order instead of a single `developer`, each a Scribe-recorded stage. The test is read off `team.md`, not off the profile name. Fan-out never replaces Research, Plan, council, or Review, and a plan the `lead` never wrote cannot have produced a deliverable list. A run that opens with a specialist deliverable has skipped four stages, not chosen a different shape.
 
 ### Per-Stage Advance Checklist (Run After Every Stage)
 
-Do not advance from stage N to stage N+1 until both are confirmed on disk for stage N: the required artifact at the owning role's `Deliverable Root`, and a `history/<agent>.md` entry carrying its consumption block. When either is absent, re-dispatch the owning role or fire the Risk Gate — never advance on assumed completion. Quote only paths this run actually enumerated. For a fan-out run, apply the check per deliverable before Review begins.
+Stage N's required artifact at the owning role's `Deliverable Root` gates dispatching stage N+1; a `history/<agent>.md` entry carrying its consumption block additionally gates counting stage N complete. When the artifact is absent, re-dispatch the owning role or fire the Risk Gate — never advance on assumed completion. When the artifact exists but the history entry does not, that is a resend candidate, not a re-run — see *Scribe Hand-off Pipelining* below. Quote only paths this run actually enumerated. For a fan-out run, apply the check per deliverable before Review begins.
 
 **Count the history entries at the end of the run.** The number of `history/<agent>.md` entries must be at least the number of stages and deliverables the run claims — counting the dispatched agents' files, not `Squad Scribe.md` or the `autopilot-run-*` and `autonomous-loop-*` summaries. A run that produced polished deliverables and left one or two history files did not dispatch its cast — it authored them inline. Report that as a failed run rather than a completed one.
+
+### Scribe Hand-off Pipelining: Enablement Predicate and Barriers
+
+**Enablement Predicate (`PipeliningEnabled`, required whenever it holds).** Pipelining is required for a given hand-off — not optional — whenever **all** of the following hold: `mode == autopilot`; not Watch Mode; not the federation root; the active Cost Preflight round is not `approved-over-ceiling` (its dispatch units stay sequential); no pipelined hand-off has failed verification this run (a failed hand-off that ran alone does not count); and the host can dispatch subagents in parallel. A configured cost ceiling does not disable pipelining: the round that admits stage N+1 counts stage N's not-yet-recorded spend as a pending reservation (*Pending reservation* in `references/consumption.md`), so a lagging `currentRun.estCostUsd` never under-counts spend. An inner run under untargeted federation autopilot evaluates this predicate like any other run, because its aggregate ceiling is checked only at meta rounds, which read an inner ledger after that inner run has drained. The host term is decided from one tool-checkable signal only: the coordinator's own subagent-dispatch tool can be called more than once in a single parallel tool-call block — VS Code's `runSubagent`, or Copilot CLI's `task` with or without `mode: background`. The coordinator checks its own tool list — never the model name, host name, or prose claims — and when no subagent-dispatch tool is present the term is `false`, the safe default. This term governs gain, not safety: a host that serializes the calls in one block degrades to sequential timing while every barrier still holds. When the predicate does not hold, the coordinator dispatches stage N's Scribe hand-off, waits for it, and only then dispatches stage N+1 — exactly as today.
+
+**Barrier invariant.** Any step that reads Scribe-written state is a barrier: every Scribe hand-off queued for that squad root up to and including the current stage must have returned and been verified (`-Check -ExpectedHistoryCounts` plus `-BaselinePath`) before the barrier's consuming step proceeds — a queued-but-unverified hand-off blocks the barrier, it does not get skipped. The list below is a minimum, not exhaustive:
+
+1. A council verdict consumed by Implement.
+2. An intake gate verdict.
+3. A discovery gate verdict.
+4. Every Cost Preflight write, CAS or check, with or without a ceiling. It drains the prior block: every Scribe hand-off already dispatched for the root has returned and verified. Stage N's own hand-off is not yet dispatched at that point, so the round admitting stage N+1 counts stage N's spend as a pending reservation instead.
+5. The Risk Gate, before the approved action.
+6. The Impactful-Action Gate, before the approved action.
+7. Autonomous re-validation / divergence check.
+8. The final-outcome gate, including the notification record and the autopilot-run summary.
+9. Session start/resume reconciliation.
+10. End of every coordinator turn, and any read of `state.json`.
+11. All fan-out deliverables' Scribe writes verified before Review begins.
+
+`state.json` advances per stage; it legitimately lags one stage during overlap, which is expected, not a defect. A dispatch to any impactful-capable role is never included in the same parallel block as a Scribe hand-off — evaluate every Risk-Gate trigger for stage N before batching stage N+1's dispatch. The narrative — unit of concurrency, queueing, verification, fail-closed/correction, and resume — lives in *Scribe Hand-off Pipelining (Autopilot)* in `references/operating-procedure.md`.
 
 ## Notification Procedure
 
