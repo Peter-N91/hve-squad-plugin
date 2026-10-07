@@ -30,9 +30,9 @@ description: "Append-only log of squad decisions and their rationale"
 # Squad Decisions
 
 Entries are appended below in chronological order. Each entry records the decision, its rationale, the turn it was made on, and a reference to an ADR when the decision is architecturally significant. Council Verdicts use the `## Council Verdict <timestamp> <topic-id>` heading and the schema in `skills/squad/references/rules/squad-council.md`; Discovery Verdicts and Intake Readiness Verdicts use their own headings and schemas from `skills/squad/references/rules/squad-discovery-gate.md` and `skills/squad/references/rules/squad-intake-gate.md`. Prior entries are never edited or removed.
-
-<!-- Append each new decision at the end of this file, after the last entry. -->
 ```
+
+No append-only file ends with a marker comment: the last entry is the last thing in the file, so a new entry is always written at the very end.
 
 ## history/<agent>.md
 
@@ -69,8 +69,6 @@ description: "Append-only dispatch history for a single squad agent"
 # History: <agent>
 
 Each entry records a request this agent handled, the findings or outcome it returned, and the turn it was dispatched on. Entries are appended in chronological order and never edited.
-
-<!-- Append each new dispatch entry at the end of this file, after the last entry. -->
 ```
 
 **The heading is literally `# History: <agent>`.** Not the bare agent name, not a role-flavored rewrite of the description. A later turn locates a history file by that heading, and a file headed `# Squad Researcher` reads as a file with no header at all.
