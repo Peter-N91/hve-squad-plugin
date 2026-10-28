@@ -28,7 +28,7 @@
         "type": "command",
         "matcher": "task",
         "bash": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/dispatch-guards.sh\"",
-        "powershell": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT/hooks/scripts/dispatch-guards.ps1\"",
+        "powershell": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PLUGIN_ROOT/hooks/scripts/dispatch-guards.ps1\"",
         "timeoutSec": 10
       }
     ],

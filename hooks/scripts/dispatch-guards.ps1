@@ -1,114 +1,92 @@
-# preToolUse (matcher: task) — four best-effort dispatch-time checks in one script.
-# Sources: squad-intake-gate.instructions.md, squad-routing.instructions.md (Tracker-Write Gate),
-# squad-federation.instructions.md (naming + no-overwrite), model-routing.md (routed model). See ../README.md for scope/limitations.
-$ErrorActionPreference = 'SilentlyContinue'
+#!/usr/bin/env pwsh
+# Copyright (c) 2026 Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+#Requires -Version 7.4
 
-$input_raw = [Console]::In.ReadToEnd()
-$decisionsFile = '.copilot-tracking/squad/decisions.md'
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
-# --- Check 1: Intake Readiness Verdict gate ---
-if ((Test-Path -LiteralPath $decisionsFile -PathType Leaf) -and ($input_raw -match '(?i)plan|implement|developer|lead')) {
-    $lines = Get-Content -LiteralPath $decisionsFile
-    $lastVerdictIdx = -1
-    for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($lines[$i] -match 'Intake Readiness Verdict') { $lastVerdictIdx = $i }
-    }
-    if ($lastVerdictIdx -ge 0) {
-        $verdictLine = ($lines[$lastVerdictIdx..($lines.Count - 1)] | Where-Object { $_ -match '(?i)Verdict:' } | Select-Object -First 1)
-        if ($verdictLine -match '(?i)Not-Ready') {
-            $reason = 'Intake Gate (squad-intake-gate.instructions.md): the latest recorded Intake Readiness Verdict in decisions.md is Not-Ready. Dispatching a plan/implement stage is denied until the verdict is re-run and reaches Ready or Ready-With-Gaps.'
-            (@{ permissionDecision = 'deny'; permissionDecisionReason = $reason } | ConvertTo-Json -Compress) | Write-Output
-            exit 0
-        }
-    }
+function Deny-Dispatch {
+    param([string]$Reason)
+    @{ permissionDecision = 'deny'; permissionDecisionReason = $Reason } | ConvertTo-Json -Compress
+    exit 0
 }
 
-# --- Check 2: Tracker-Write Gate ---
-# The Squad Scribe writes only squad state, never a tracker, and its payloads routinely
-# quote the request ("create ... a prioritized backlog"); matching its prompt text denied
-# legitimate state hand-offs, so a Scribe dispatch is exempt by agent name.
-$isScribeDispatch = $input_raw -match '(?i)(agent_type|agentName)\\?"\s*:\s*\\?"Squad Scribe\\?"'
-# A write verb must sit next to a tracker noun in the same sentence, and negated phrasing
-# ("must not create ... in Azure DevOps") does not count. A bare "backlog" is a local planning
-# deliverable, not a tracker: matching it anywhere in the prompt denied every planning role whose
-# request asked for "a prioritized backlog" and broke pipelined Scribe + next-stage blocks.
-$trackerNoun = '(work items?|jira( (issues?|tickets?))?|github issues?|azure devops|ado|issue tracker|backlog handoff)'
-$writeVerb = '(create|push|apply|sync)'
-$trackerWritePattern = "(?i)[^.;]{0,40}\b$writeVerb\b[^.;]{0,40}\b$trackerNoun\b|[^.;]{0,40}\b$trackerNoun\b[^.;]{0,15}\b$writeVerb\b"
-$negatedWrite = "(?i)(\bnot|\bnever|\bwithout|n't)\s+(\w+\s+){0,2}$writeVerb\b"
-$trackerWriteHits = @([regex]::Matches($input_raw, $trackerWritePattern) | Where-Object { $_.Value -notmatch $negatedWrite })
-if (-not $isScribeDispatch -and $trackerWriteHits.Count -gt 0) {
-    if ($input_raw -notmatch 'Squad Backlog Executor') {
-        $reason = 'Tracker-Write Gate (squad-routing.instructions.md): only Squad Backlog Executor may perform a tracker write (ADO/Jira work-item create or update). Dispatch that role instead, with a single recorded approval per batch.'
-        (@{ permissionDecision = 'deny'; permissionDecisionReason = $reason } | ConvertTo-Json -Compress) | Write-Output
-        exit 0
-    }
-}
-
-# --- Check 3: Federation sub-squad naming guard ---
-$nameMatch = [regex]::Match($input_raw, 'members/([A-Za-z0-9_-]+)')
-if ($nameMatch.Success) {
-    $name = $nameMatch.Groups[1].Value
-    if ($name -notmatch '^[a-z0-9][a-z0-9-]*$') {
-        $reason = "squad-federation.instructions.md naming rule: sub-squad name $name fails ^[a-z0-9][a-z0-9-]*`$. Choose a lower-kebab-case name before creating members/$name/."
-        (@{ permissionDecision = 'deny'; permissionDecisionReason = $reason } | ConvertTo-Json -Compress) | Write-Output
-        exit 0
-    }
-}
-
-# --- Check 4: Routed-model guard ---
-# model-routing.md Precedence: under `Model routing: ranked` or `manual`, a dispatch to a roster
-# agent passes that row's `Model` cell. Compares the dispatch with the cell; never fills or changes
-# the cell. The Squad Scribe is exempt: its own model pin governs (model-routing.md).
-$dispatchArgs = $null
 try {
-    $hookInput = $input_raw | ConvertFrom-Json
-    $dispatchArgs = $hookInput.toolArgs
-    if ($null -eq $dispatchArgs) { $dispatchArgs = $hookInput.tool_input }
-    if ($dispatchArgs -is [string]) { $dispatchArgs = $dispatchArgs | ConvertFrom-Json }
-}
-catch { $dispatchArgs = $null }
-if ($null -ne $dispatchArgs) {
-    $agentType = [string]$dispatchArgs.agent_type
-    if (-not $agentType) { $agentType = [string]$dispatchArgs.agentName }
-    $requestedModel = [string]$dispatchArgs.model
-    if ($agentType -and $agentType -ne 'Squad Scribe') {
-        $teamFile = '.copilot-tracking/squad/team.md'
-        $memberMatch = [regex]::Match($input_raw, 'members[\\/]+([a-z0-9][a-z0-9-]*)')
-        if ($memberMatch.Success) {
-            $memberTeam = ".copilot-tracking/squad/members/$($memberMatch.Groups[1].Value)/team.md"
-            if (Test-Path -LiteralPath $memberTeam -PathType Leaf) { $teamFile = $memberTeam }
+    $inputText = [Console]::In.ReadToEnd()
+    $hook = $inputText | ConvertFrom-Json -AsHashtable
+    if ($hook -isnot [Collections.IDictionary]) { throw 'Expected a hook input object.' }
+    $repo = if ($hook['cwd']) { (Resolve-Path -LiteralPath $hook['cwd']).ProviderPath } else { (Get-Location).ProviderPath }
+    $calls = if ($hook.ContainsKey('toolCalls')) { @($hook.toolCalls | Where-Object name -eq 'task') }
+    else {
+        $arguments = if ($hook.ContainsKey('toolArgs')) { $hook.toolArgs } else { $hook['tool_input'] }
+        @(@{ args = $arguments })
+    }
+    $module = Join-Path -Path $PSScriptRoot -ChildPath '..' -AdditionalChildPath '..', 'skills', 'squad', 'scripts', 'SquadCoordinator.psm1'
+    if (-not (Test-Path -LiteralPath $module)) { $module = Join-Path -Path $PSScriptRoot -ChildPath 'runtime' -AdditionalChildPath 'SquadCoordinator.psm1' }
+    Import-Module $module -Force
+    $agents = Get-SquadAgentIndex $repo
+
+    foreach ($call in $calls) {
+        $dispatch = $call.args
+        if ($dispatch -is [string]) { $dispatch = $dispatch | ConvertFrom-Json -AsHashtable }
+        if ($dispatch -isnot [Collections.IDictionary]) { throw 'Expected task arguments as an object.' }
+        $agentType = if ($dispatch['agent_type']) { [string]$dispatch['agent_type'] } else { [string]$dispatch['agentName'] }
+        $agentName = $agentType
+        if (-not $agents.ContainsKey($agentName) -and $agentType.Contains(':')) {
+            $stem = ($agentType -split ':')[-1]
+            $nativeMatches = @($agents.Values | Where-Object { ([IO.Path]::GetFileName($_.path) -replace '\.agent\.md$', '') -ceq $stem })
+            if ($nativeMatches.Count -gt 1) { Deny-Dispatch "Ambiguous native agent '$agentType'; resolve its installed definition before dispatch." }
+            if ($nativeMatches.Count -eq 1) { $agentName = $nativeMatches[0].name }
         }
-        if (Test-Path -LiteralPath $teamFile -PathType Leaf) {
-            $teamLines = Get-Content -LiteralPath $teamFile -Encoding UTF8
-            if (@($teamLines | Where-Object { $_ -match '^\s*Model routing:\s*(ranked|manual)\b' }).Count -gt 0) {
-                $header = $null
-                $allowed = New-Object System.Collections.Generic.List[string]
-                foreach ($line in $teamLines) {
-                    if ($line -notmatch '^\s*\|') { $header = $null; continue }
-                    $cells = @($line.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim() })
-                    if ($null -eq $header) {
-                        if ($cells -contains 'Model' -and $cells -contains 'Agent Name (Primary)') { $header = $cells }
-                        continue
-                    }
-                    if ($cells[0] -match '^-+$') { continue }
-                    $modelCell = ($cells[[array]::IndexOf($header, 'Model')] -replace '`', '').Trim()
-                    if (-not $modelCell -or $modelCell -eq [string][char]0x2014 -or $modelCell -eq '-') { continue }
-                    $names = New-Object System.Collections.Generic.List[string]
-                    $names.Add($cells[[array]::IndexOf($header, 'Agent Name (Primary)')])
-                    $altIndex = [array]::IndexOf($header, 'Alternate Agents')
-                    if ($altIndex -ge 0) { foreach ($alt in $cells[$altIndex].Split(',')) { $names.Add($alt.Trim()) } }
-                    if ($names -contains $agentType -and -not $allowed.Contains($modelCell)) { $allowed.Add($modelCell) }
-                }
-                if ($allowed.Count -gt 0 -and -not $allowed.Contains($requestedModel)) {
-                    $passed = if ($requestedModel) { "model '$requestedModel'" } else { 'no model' }
-                    $reason = "Routed-model guard (model-routing.md Precedence): $teamFile routes $agentType to $($allowed -join ' or ') and this dispatch passed $passed. Re-dispatch with model: $($allowed[0]), copied from the Model cell."
-                    (@{ permissionDecision = 'deny'; permissionDecisionReason = $reason } | ConvertTo-Json -Compress) | Write-Output
-                    exit 0
-                }
+        $raw = $dispatch | ConvertTo-Json -Depth 20 -Compress
+        $root = Join-Path -Path $repo -ChildPath '.copilot-tracking' -AdditionalChildPath 'squad'
+        $member = [regex]::Match($raw, 'members[\\/]+([A-Za-z0-9_-]+)')
+        if ($member.Success) {
+            $name = $member.Groups[1].Value
+            if ($name -cnotmatch '^[a-z0-9][a-z0-9-]*$') { Deny-Dispatch "Federation member '$name' must be lower-kebab-case." }
+            $memberRoot = Join-Path -Path $root -ChildPath 'members' -AdditionalChildPath $name
+            if (Test-Path -LiteralPath (Join-Path $memberRoot 'team.md') -PathType Leaf) { $root = $memberRoot }
+        }
+
+        $decisionsPath = Join-Path $root 'decisions.md'
+        if ((Test-Path -LiteralPath $decisionsPath) -and $raw -match '(?i)plan|implement|developer|lead') {
+            $decisions = [IO.File]::ReadAllText($decisionsPath)
+            $verdicts = [regex]::Matches($decisions, '(?ms)^## Intake Readiness Verdict\b.*?(?=^## |\z)')
+            if ($verdicts.Count -and $verdicts[-1].Value -match '(?im)^\*\s*Verdict:\s*Not-Ready\b') {
+                Deny-Dispatch 'Intake Gate: the latest Intake Readiness Verdict is Not-Ready. Resolve it before planning or implementation.'
             }
         }
-    }
-}
 
-Write-Output '{"permissionDecision":"allow"}'
+        $tracker = '(work items?|jira( (issues?|tickets?))?|github issues?|azure devops|ado|issue tracker|backlog handoff)'
+        $verb = '(create|push|apply|sync)'
+        $writes = @([regex]::Matches($raw, "(?i)[^.;]{0,40}\b$verb\b[^.;]{0,40}\b$tracker\b|[^.;]{0,40}\b$tracker\b[^.;]{0,15}\b$verb\b") |
+                Where-Object { $_.Value -notmatch "(?i)(\bnot|\bnever|\bwithout|n't)\s+(\w+\s+){0,2}$verb\b" })
+        if ($writes.Count -and $agentName -notin @('Squad Scribe', 'Squad Backlog Executor')) {
+            Deny-Dispatch 'Tracker-Write Gate: only Squad Backlog Executor may perform a tracker write, with recorded approval.'
+        }
+
+        $teamPath = Join-Path $root 'team.md'
+        if ($agentName -eq 'Squad Scribe' -or -not (Test-Path -LiteralPath $teamPath -PathType Leaf)) { continue }
+        $team = [IO.File]::ReadAllText($teamPath)
+        if ($team -notmatch '(?m)^Model routing:\s*`?(ranked|economy|manual)`?\s*$') { continue }
+        $rows = @(Get-SquadRoster $root | Where-Object {
+                $_['Agent Name (Primary)'] -ceq $agentName -or $agentName -cin @($_['Alternate Agents'] -split ',\s*')
+            })
+        if (-not $rows.Count) { continue }
+        $allowed = @($rows | ForEach-Object {
+                if ($_.ContainsKey('Model')) { [string]$_.Model }
+            } | Where-Object { $_ -and $_ -notin @('-', [string][char]0x2014) } | Select-Object -Unique)
+        if (-not $allowed.Count) {
+            Deny-Dispatch "Routed-model guard: $agentName has no resolved Model cell in $teamPath. Run New-SquadDispatchPlan.ps1 -ApplyModelRouting before dispatch."
+        }
+        if ([string]$dispatch['model'] -cnotin $allowed) {
+            Deny-Dispatch "Routed-model guard: $teamPath routes $agentName to $($allowed -join ' or '). Copy the planned endpoint.model into the native model argument."
+        }
+    }
+    Write-Output '{"permissionDecision":"allow"}'
+}
+catch {
+    [Console]::Error.WriteLine("dispatch-guards: $($_.Exception.Message)")
+    exit 1
+}
